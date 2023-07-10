@@ -23,7 +23,7 @@ const App = () => {
     } else {
       dispatch(fetchProfileOwner(user.token));
     }
-  }, [dispatch, user.token]);
+  }, [dispatch]);
 
   useEffect(() => {
     if (Object.keys(currentUser).length > 0) {
