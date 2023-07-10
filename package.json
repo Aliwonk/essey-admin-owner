@@ -70,7 +70,7 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "start-js": "PORT=3002 && react-scripts --openssl-legacy-provider start --dev",
+    "start-js": "export PORT=3002 && react-scripts --openssl-legacy-provider start --dev",
     "start-css": "sass --style=compressed --watch src/sass/styles.scss:public/css/styles.css",
     "start": "concurrently \"npm run start-js\" \"npm run start-css\"",
     "build-js": "react-scripts build --prod",
