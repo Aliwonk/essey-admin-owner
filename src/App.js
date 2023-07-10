@@ -18,12 +18,12 @@ const App = () => {
   const { currentUser, user, isProfile } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!user.token) {
+    if (!user) {
       window.location.href = '/register';
     } else {
       dispatch(fetchProfileOwner(user.token));
     }
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (Object.keys(currentUser).length > 0) {
