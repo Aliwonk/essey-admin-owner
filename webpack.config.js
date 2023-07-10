@@ -1,5 +1,6 @@
 module.exports = {
   devServer: {
-    allowedHosts: 'all',
+    compress: true,
+    public: 'essey.site', // That solved it
   },
 };
