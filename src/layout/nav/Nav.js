@@ -55,7 +55,7 @@ const Nav = () => {
   return (
     <div
       id="nav"
-      style={{ backgroundColor: '#000000' }}
+      style={{ backgroundColor: '#000000', backgroundImage: 'none' }}
       className={classNames('nav-container d-flex', navClasses)}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
