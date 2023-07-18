@@ -66,7 +66,7 @@ const RegisterCompany = () => {
         .then((res) => res.json())
         .then((data) => {
           if (data) {
-            setAddress(`${data.suggestions[0].vunrestricted_value}`);
+            setAddress(`${data.suggestions[0].unrestricted_value}`);
           } else {
             setAddress(`К сожалению произошла ошибка`);
           }
