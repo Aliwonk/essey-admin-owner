@@ -19,7 +19,7 @@ const initialState = {
     createNewPassword: null,
   },
   isProfile: false,
-  isLogin: !!getCookie('token'),
+  isLogin: !(getCookie('token') === 'undefined' || !getCookie('token')),
   isConfirmEmail: false,
   isSendForgotPass: false,
   isCreateNewPass: false,
@@ -44,6 +44,11 @@ const authSlice = createSlice({
       document.cookie = `idUser=${action.payload.id}; max-age=${expiresToken}`;
       document.cookie = `token=${action.payload.token}; max-age=${expiresToken}`;
       document.cookie = `role=${action.payload.role}; max-age=${expiresToken}`;
+    },
+    exiteUser() {
+      document.cookie = `idUser=; max-age=0`;
+      document.cookie = `token=; max-age=0`;
+      document.cookie = `role=; max-age=0`;
     },
   },
   extraReducers: (builder) => {
@@ -194,7 +199,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCurrentUser, saveUser } = authSlice.actions;
+export const { setCurrentUser, saveUser, exiteUser } = authSlice.actions;
 const authReducer = authSlice.reducer;
 
 export default authReducer;

@@ -1,29 +1,32 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
-import { Col, Dropdown, Row } from 'react-bootstrap';
+import { Button, Col, Dropdown, Row } from 'react-bootstrap';
 import { MENU_PLACEMENT } from 'constants.js';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { layoutShowingNavMenu } from 'layout/layoutSlice';
+import { exiteUser } from 'auth/authSlice';
 
-const NavUserMenuContent = () => (
-  <div>
-    <Row className="mb-3 ms-0 me-0">
-      <Col xs="12" className="ps-1 mb-2">
-        <div className="text-extra-small text-primary">АККАУНТ</div>
-      </Col>
-      <Col xs="6" className="ps-1 pe-1">
-        <ul className="list-unstyled">
-          <li>
-            <a href="/profile">Профиль</a>
-          </li>
-          {/* <li><a href="#/!">Настройки</a></li> */}
-          {/* <li>
+const NavUserMenuContent = () => {
+  const dispatch = useDispatch();
+  return (
+    <div>
+      <Row className="mb-3 ms-0 me-0">
+        <Col xs="12" className="ps-1 mb-2">
+          <div className="text-extra-small text-primary">АККАУНТ</div>
+        </Col>
+        <Col xs="6" className="ps-1 pe-1">
+          <ul className="list-unstyled">
+            <li>
+              <a href="/profile">Профиль</a>
+            </li>
+            {/* <li><a href="#/!">Настройки</a></li> */}
+            {/* <li>
             <a href="#/!">Календарь</a>
           </li> */}
-        </ul>
-      </Col>
-      {/* <Col xs="6" className="ps-1 pe-1">
+          </ul>
+        </Col>
+        {/* <Col xs="6" className="ps-1 pe-1">
         <ul className="list-unstyled">
           <li>
             <a href="#/!">Безопасность</a>
@@ -33,8 +36,8 @@ const NavUserMenuContent = () => (
           </li>
         </ul>
       </Col> */}
-    </Row>
-    {/* <Row className="mb-1 ms-0 me-0">
+      </Row>
+      {/* <Row className="mb-1 ms-0 me-0">
       <Col xs="12" className="p-1 mb-2 pt-2">
         <div className="text-extra-small text-primary">ПРИЛОЖЕНИЕ</div>
       </Col>
@@ -59,41 +62,47 @@ const NavUserMenuContent = () => (
         </ul>
       </Col>
     </Row> */}
-    <Row className="mb-1 ms-0 me-0">
-      <Col xs="12" className="p-1 mb-3 pt-3">
-        <div className="separator-light" />
-      </Col>
-      <Col xs="6" className="ps-1 pe-1">
-        <ul className="list-unstyled">
-          <li>
-            <a href="#/!">
-              <CsLineIcons icon="help" className="me-2" size="17" /> <span className="align-middle">Помощь</span>
-            </a>
-          </li>
-          {/* <li>
+      <Row className="mb-1 ms-0 me-0">
+        <Col xs="12" className="p-1 mb-3 pt-3">
+          <div className="separator-light" />
+        </Col>
+        <Col xs="6" className="ps-1 pe-1">
+          <ul className="list-unstyled">
+            <li>
+              <a href="#/!">
+                <CsLineIcons icon="help" className="me-2" size="17" /> <span className="align-middle">Помощь</span>
+              </a>
+            </li>
+            {/* <li>
             <a href="#/!">
               <CsLineIcons icon="file-text" className="me-2" size="17" /> <span className="align-middle">Документы</span>
             </a>
           </li> */}
-        </ul>
-      </Col>
-      <Col xs="6" className="pe-1 ps-1">
-        <ul className="list-unstyled">
-          {/* <li>
+          </ul>
+        </Col>
+        <Col xs="6" className="pe-1 ps-1">
+          <ul className="list-unstyled">
+            {/* <li>
             <a href="#/!">
               <CsLineIcons icon="gear" className="me-2" size="17" /> <span className="align-middle">Настройки</span>
             </a>
           </li> */}
-          <li>
-            <a href="#/!">
-              <CsLineIcons icon="logout" className="me-2" size="17" /> <span className="align-middle">Выйти</span>
-            </a>
-          </li>
-        </ul>
-      </Col>
-    </Row>
-  </div>
-);
+            <li>
+              <div
+                onClick={() => {
+                  dispatch(exiteUser());
+                  document.location.href = '/login';
+                }}
+              >
+                <CsLineIcons icon="logout" className="me-2" size="17" /> <span className="align-middle">Выйти</span>
+              </div>
+            </li>
+          </ul>
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
 const NavUserMenuDropdownToggle = React.memo(
   React.forwardRef(({ onClick, expanded = false, user = {} }, ref) => (

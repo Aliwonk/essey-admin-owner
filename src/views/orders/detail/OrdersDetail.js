@@ -51,7 +51,7 @@ const OrdersDetail = () => {
           {/* Title End */}
 
           {/* Top Buttons Start */}
-          {order.status !== 'Отменен' && (
+          {order.status !== 'Отменен' && order.status !== 'Доставлен' && (
             <>
               <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
                 <Dropdown className="w-100 w-md-auto">
@@ -471,7 +471,7 @@ const OrdersDetail = () => {
                 </Row> */}
                   <Row className="g-0 mb-2">
                     <Col xs="auto" className="ms-auto ps-3 text-muted">
-                      Кешбек
+                      Потрачено кэшбэк
                     </Col>
                     <Col xs="auto" className="sw-13 text-end">
                       <span>{order.cashback}</span>
@@ -707,7 +707,7 @@ const OrdersDetail = () => {
           {/* Address End */}
 
           {/* START CANCEL ORDER */}
-          {order.status !== 'Отменен' && (
+          {order.status !== 'Отменен' && order.status !== 'Доставлен' && (
             <Col>
               <h2 className="small-title">Отмена</h2>
               <Card>

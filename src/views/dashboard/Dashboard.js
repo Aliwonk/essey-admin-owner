@@ -6,6 +6,7 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { fetchCompanyInf } from 'views/company/slice/async';
 import { getDate } from 'utils/date';
+import Loader from 'components/loader';
 // import PerformanceChart from './components/PerformanceChart';
 
 const Dashboard = () => {
@@ -75,26 +76,62 @@ const Dashboard = () => {
       <Row className="mb-5 g-2">
         <Col xs="6" md="4" lg="2">
           <Card className="h-100 hover-scale-up cursor-pointer">
-            <Card.Body className="d-flex flex-column align-items-center">
-              <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
-                <CsLineIcons icon="dollar" className="text-primary" />
+            {!isLoading.get ? (
+              <Card.Body className="d-flex flex-column align-items-center">
+                <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
+                  <CsLineIcons icon="dollar" className="text-primary" />
+                </div>
+                <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Прибыль</div>
+                <div className="text-primary cta-4">{profit} руб</div>
+              </Card.Body>
+            ) : (
+              <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '25px',
+                    height: '35px',
+                  }}
+                  styleImg={{
+                    width: '250%',
+                    height: '250%',
+                  }}
+                />
               </div>
-              <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Прибыль</div>
-              <div className="text-primary cta-4">{profit} руб</div>
-            </Card.Body>
+            )}
           </Card>
         </Col>
         <Col xs="6" md="4" lg="2">
           <Card className="h-100 hover-scale-up cursor-pointer">
-            <a href="/orders">
-              <Card.Body className="d-flex flex-column align-items-center">
-                <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
-                  <CsLineIcons icon="cart" className="text-primary" />
-                </div>
-                <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Все заказы</div>
-                <div className="text-primary cta-4">{Object.keys(company).length > 0 && company.orders.length}</div>
-              </Card.Body>
-            </a>
+            {!isLoading.get ? (
+              <a href="/orders">
+                <Card.Body className="d-flex flex-column align-items-center">
+                  <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
+                    <CsLineIcons icon="cart" className="text-primary" />
+                  </div>
+                  <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Все заказы</div>
+                  <div className="text-primary cta-4">{Object.keys(company).length > 0 && company.orders.length}</div>
+                </Card.Body>
+              </a>
+            ) : (
+              <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '25px',
+                    height: '35px',
+                  }}
+                  styleImg={{
+                    width: '250%',
+                    height: '250%',
+                  }}
+                />
+              </div>
+            )}
           </Card>
         </Col>
         {/* <Col xs="6" md="4" lg="2">
@@ -110,15 +147,33 @@ const Dashboard = () => {
         </Col> */}
         <Col xs="6" md="4" lg="2">
           <Card className="h-100 hover-scale-up cursor-pointer">
-            <a href="/customers">
-              <Card.Body className="d-flex flex-column align-items-center">
-                <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
-                  <CsLineIcons icon="user" className="text-primary" />
-                </div>
-                <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Клиенты</div>
-                <div className="text-primary cta-4">{Object.keys(company).length > 0 && company.clients.length}</div>
-              </Card.Body>
-            </a>
+            {!isLoading.get ? (
+              <a href="/customers">
+                <Card.Body className="d-flex flex-column align-items-center">
+                  <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
+                    <CsLineIcons icon="user" className="text-primary" />
+                  </div>
+                  <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Клиенты</div>
+                  <div className="text-primary cta-4">{Object.keys(company).length > 0 && company.clients.length}</div>
+                </Card.Body>
+              </a>
+            ) : (
+              <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '25px',
+                    height: '35px',
+                  }}
+                  styleImg={{
+                    width: '250%',
+                    height: '250%',
+                  }}
+                />
+              </div>
+            )}
           </Card>
         </Col>
         {/* <Col xs="6" md="4" lg="2">
