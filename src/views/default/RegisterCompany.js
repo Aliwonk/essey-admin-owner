@@ -53,14 +53,26 @@ const RegisterCompany = () => {
       };
       // `https://api.mapbox.com/geocoding/v5/mapbox.places/Kyzyl.json?access_token=${MAPBOX.TOKEN}`
       // https://api.mapbox.com/geocoding/v5/mapbox.places/${coords.longitude},${coords.latitude}.json?access_token=${MAPBOX.TOKEN}
-      fetch(`https://api.geotree.ru/address.php?lon=${coords.longitude}&lat=${coords.latitude}`)
+      fetch(`https://suggestions.dadata.ru/suggestions/api/4_1/rs/geolocate/address`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: 'Token 244877602a2b7d6e0033ac937aae68e227c1d8fb',
+        },
+        body: JSON.stringify({ lat: coords.latitude, lon: coords.longitude }),
+      })
         .then((res) => res.json())
         .then((data) => {
-          setAddress(`${data[0].value}`);
+          if (data) {
+            setAddress(`${data.suggestions[0].vunrestricted_value}`);
+          } else {
+            setAddress(`К сожалению произошла ошибка`);
+          }
         });
 
       setCoordinates(coords);
-      console.log(coords);
     });
   }, []);
 
@@ -81,6 +93,7 @@ const RegisterCompany = () => {
   });
   const [category, setCategory] = useState('');
   const initialValues = { name: '', annotation: '', phone: '', logotype: '' };
+  // eslint-disable-next-line consistent-return
   const onSubmit = (values) => {
     if (!isLoading.createCompany) {
       const logotype = document.getElementsByName('logotype');
@@ -88,6 +101,13 @@ const RegisterCompany = () => {
       const data = new FormData();
 
       delete values.logotype;
+      if (address === 'К сожалению произошла ошибка') {
+        return alert('Невозможно создать. Попробуйте позже');
+      }
+      if (address === '') {
+        return alert('Заполните адрес');
+      }
+
       Object.keys(values).forEach((key) => {
         data.append(key, values[key]);
       });

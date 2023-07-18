@@ -59,7 +59,7 @@ const InvalidAccess = () => {
           </p> */}
             </div>
             <div>
-              <NavLink to="/" className="btn btn-icon btn-icon-start btn-primary">
+              <NavLink to="/register-company" className="btn btn-icon btn-icon-start btn-primary">
                 <CsLineIcons icon="arrow-left" /> <span>Вернуться</span>
               </NavLink>
             </div>
