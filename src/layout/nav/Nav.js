@@ -53,7 +53,13 @@ const Nav = () => {
   };
 
   return (
-    <div id="nav" className={classNames('nav-container d-flex', navClasses)} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div
+      id="nav"
+      style={{ backgroundColor: '#000000' }}
+      className={classNames('nav-container d-flex', navClasses)}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div
         className="nav-content d-flex"
         style={placementStatus.placementHtmlData === MENU_PLACEMENT.Horizontal && menuPadding ? { paddingRight: menuPadding } : {}}

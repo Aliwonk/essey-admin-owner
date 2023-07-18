@@ -4,15 +4,15 @@ import Dropzone, { defaultClassNames } from 'react-dropzone-uploader';
 import 'react-dropzone-uploader/dist/styles.css';
 import DropzoneColumnPreview from 'components/dropzone/DropzoneColumnPreview';
 
-const DetailImage = () => {
-  const filePaths = React.useMemo(() => ['/img/product/small/product-1.webp'], []);
+const DetailImage = ({ urlImage, title }) => {
+  const filePaths = React.useMemo(() => [urlImage], [urlImage]);
   const [files, setFiles] = useState([]);
 
   const loadFile = (path) => {
     return new Promise((resolve, reject) => {
       fetch(path).then((res) => {
         res.arrayBuffer().then((buf) => {
-          return resolve(new File([buf], 'image_data_url.webp', { type: 'image/jpeg' }));
+          return resolve(new File([buf], title, { type: 'image/jpeg' }));
         });
       });
     });
@@ -26,11 +26,12 @@ const DetailImage = () => {
   }, [filePaths]);
 
   useEffect(() => {
+    console.log(files);
     loadFiles();
     return () => setFiles([]);
   }, [loadFiles]);
 
-  const getUploadParams = () => ({ url: 'https://httpbin.org/post' });
+  // const getUploadParams = () => ({ url: 'https://httpbin.org/post' });
 
   const onChangeStatus = (fileWithMeta, status) => {
     // console.log(fileWithMeta);
@@ -40,7 +41,7 @@ const DetailImage = () => {
   return (
     <Dropzone
       initialFiles={files}
-      getUploadParams={getUploadParams}
+      // getUploadParams={getUploadParams}
       PreviewComponent={DropzoneColumnPreview}
       submitButtonContent={null}
       accept="image/*"

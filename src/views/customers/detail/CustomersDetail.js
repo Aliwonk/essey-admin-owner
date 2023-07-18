@@ -1,14 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ReactTags from 'react-tag-autocomplete';
 import { Row, Col, Button, Dropdown, Card, Badge, Form } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
+import { useParams } from 'react-router-dom/cjs/react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDate } from 'utils/date';
+import { fetchInfClient, fetchOrdersClient } from '../slice/async';
 
 const CustomersDetail = () => {
-  const title = 'Customer Detail';
-  const description = 'Ecommerce Customer Detail Page';
+  const dispatch = useDispatch();
+  const { user, currentUser } = useSelector((state) => state.auth);
+  const { client, isLoading, clientOrders } = useSelector((state) => state.clients);
+  const [orders, setOrders] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const title = 'Клиент';
+  const description = 'Страница клиента';
+  const { id } = useParams();
 
+  useEffect(() => {
+    if (Object.keys(user).length > 0) {
+      dispatch(
+        fetchInfClient({
+          id,
+          token: user.token,
+        })
+      );
+
+      dispatch(fetchOrdersClient(id));
+    }
+  }, [dispatch, id, user]);
+
+  useEffect(() => {
+    console.log(client);
+    const ordersShop = clientOrders.filter((order) => order.shopOrders[0].shop.id === currentUser.list_shop[0].id);
+    const totalAmountOrders = ordersShop.reduce((curr, prev) => {
+      const total = prev.amount + curr;
+      return total;
+    }, 0);
+    setOrders(ordersShop);
+    setTotalAmount(totalAmountOrders);
+  }, [client, clientOrders]);
   // Tags
   const [tags, setTags] = useState([
     { id: 0, name: 'Rates' },
@@ -35,7 +68,7 @@ const CustomersDetail = () => {
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
             <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/customers">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Customers</span>
+              <span className="align-middle text-small ms-1">Список клиентов</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -44,7 +77,7 @@ const CustomersDetail = () => {
           {/* Title End */}
 
           {/* Top Buttons Start */}
-          <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
+          {/* <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
             <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto">
               <CsLineIcons icon="save" /> <span>Update</span>
             </Button>
@@ -58,28 +91,33 @@ const CustomersDetail = () => {
                 <Dropdown.Item>Track Package</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </Col>
+          </Col> */}
           {/* Top Buttons End */}
         </Row>
       </div>
 
       <Row>
         <Col xl="4">
-          <h2 className="small-title">Info</h2>
+          <h2 className="small-title">Иноформация</h2>
           <Card className="mb-5">
             <Card.Body className="mb-n5">
               <div className="d-flex align-items-center flex-column mb-5">
                 <div className="mb-5 d-flex align-items-center flex-column">
                   <div className="sw-6 sh-6 mb-3 d-inline-block bg-primary d-flex justify-content-center align-items-center rounded-xl">
-                    <div className="text-white">BC</div>
+                    <div className="text-white">
+                      {Object.keys(client).length > 0 && client.lastName[0]}
+                      {Object.keys(client).length > 0 && client.firstName[0]}
+                    </div>
                   </div>
-                  <div className="h5 mb-1">Blaine Cottrell</div>
+                  <div className="h5 mb-1">
+                    {client.lastName} {client.firstName}
+                  </div>
                   <div className="text-muted">
                     <CsLineIcons icon="pin" className="me-1" />
-                    <span className="align-middle">Montreal, Canada</span>
+                    <span className="align-middle">{client.city}</span>
                   </div>
                 </div>
-                <div className="d-flex flex-row justify-content-between w-100 w-sm-50 w-xl-100">
+                {/* <div className="d-flex flex-row justify-content-between w-100 w-sm-50 w-xl-100">
                   <Button variant="primary" className="w-100 me-2">
                     Edit
                   </Button>
@@ -89,10 +127,10 @@ const CustomersDetail = () => {
                   <Button variant="outline-primary" className="btn-icon btn-icon-only">
                     <CsLineIcons icon="more-horizontal" />
                   </Button>
-                </div>
+                </div> */}
               </div>
               <div className="mb-5">
-                <Row className="g-0 align-items-center mb-2">
+                {/* <Row className="g-0 align-items-center mb-2">
                   <Col xs="auto">
                     <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
                       <CsLineIcons icon="credit-card" className="text-primary" />
@@ -108,7 +146,7 @@ const CustomersDetail = () => {
                       </Col>
                     </Row>
                   </Col>
-                </Row>
+                </Row> */}
                 <Row className="g-0 align-items-center mb-2">
                   <Col xs="auto">
                     <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
@@ -118,10 +156,10 @@ const CustomersDetail = () => {
                   <Col className="ps-3">
                     <Row className="g-0">
                       <Col>
-                        <div className="sh-5 d-flex align-items-center lh-1-25">Avarage Order</div>
+                        <div className="sh-5 d-flex align-items-center lh-1-25">ТРАТЫ</div>
                       </Col>
                       <Col xs="auto">
-                        <div className="sh-5 d-flex align-items-center">$ 590.50</div>
+                        <div className="sh-5 d-flex align-items-center">{totalAmount} руб</div>
                       </Col>
                     </Row>
                   </Col>
@@ -135,16 +173,16 @@ const CustomersDetail = () => {
                   <Col className="ps-3">
                     <Row className="g-0">
                       <Col>
-                        <div className="sh-5 d-flex align-items-center lh-1-25">Order Count</div>
+                        <div className="sh-5 d-flex align-items-center lh-1-25">КОЛИЧЕСТВО ЗАКАЗОВ</div>
                       </Col>
                       <Col xs="auto">
-                        <div className="sh-5 d-flex align-items-center">17</div>
+                        <div className="sh-5 d-flex align-items-center"> {orders.length}</div>
                       </Col>
                     </Row>
                   </Col>
                 </Row>
               </div>
-              <div className="mb-5">
+              {/* <div className="mb-5">
                 <p className="text-small text-muted mb-2">SHIPPING ADDRESS</p>
                 <Row className="g-0 mb-2">
                   <Col xs="auto">
@@ -178,8 +216,8 @@ const CustomersDetail = () => {
                   </Col>
                   <Col className="text-alternate">blaine@cottrell.com</Col>
                 </Row>
-              </div>
-              <div className="mb-5">
+              </div> */}
+              {/* <div className="mb-5">
                 <p className="text-small text-muted mb-2">BILLING ADDRESS</p>
                 <Row className="g-0 mb-2">
                   <Col xs="auto">
@@ -213,7 +251,7 @@ const CustomersDetail = () => {
                   </Col>
                   <Col className="text-alternate">blaine@cottrell.com</Col>
                 </Row>
-              </div>
+              </div> */}
             </Card.Body>
           </Card>
         </Col>
@@ -221,163 +259,58 @@ const CustomersDetail = () => {
         <Col xl="8">
           {/* Recent Orders Start */}
           <div className="d-flex justify-content-between">
-            <h2 className="small-title">Recent Orders</h2>
-            <Button variant="background-alternate" size="xs" className="btn-icon btn-icon-end p-0 text-small">
+            <h2 className="small-title">Заказы</h2>
+            {/* <Button variant="background-alternate" size="xs" className="btn-icon btn-icon-end p-0 text-small">
               <span className="align-bottom">View All</span> <CsLineIcons icon="chevron-right" className="align-middle" size="12" />
-            </Button>
+            </Button> */}
           </div>
           <div className="mb-5">
-            <Card className="mb-2">
-              <Card.Body className="sh-16 sh-md-8 py-0">
-                <Row className="g-0 h-100 align-content-center">
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
-                    <div className="text-muted text-small d-md-none">Id</div>
-                    <NavLink to="/orders/detail" className="text-truncate h-100 d-flex align-items-center">
-                      1239
-                    </NavLink>
-                  </Col>
-                  <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Price</div>
-                    <div className="text-alternate">
-                      <span>
-                        <span className="text-small">$</span>
-                        321.75
-                      </span>
-                    </div>
-                  </Col>
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Date</div>
-                    <div className="text-alternate">13.09.2021</div>
-                  </Col>
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
-                    <div className="text-muted text-small d-md-none">Status</div>
-                    <Badge bg="outline-tertiary">CONFIRMED</Badge>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            <Card className="mb-2">
-              <Card.Body className="sh-16 sh-md-8 py-0">
-                <Row className="g-0 h-100 align-content-center">
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
-                    <div className="text-muted text-small d-md-none">Id</div>
-                    <NavLink to="/orders/detail" className="text-truncate h-100 d-flex align-items-center">
-                      1251
-                    </NavLink>
-                  </Col>
-                  <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Price</div>
-                    <div className="text-alternate">
-                      <span>
-                        <span className="text-small">$</span>
-                        59.00
-                      </span>
-                    </div>
-                  </Col>
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Date</div>
-                    <div className="text-alternate">14.09.2021</div>
-                  </Col>
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
-                    <div className="text-muted text-small d-md-none">Status</div>
-                    <Badge bg="outline-secondary">PENDING</Badge>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            <Card className="mb-2">
-              <Card.Body className="sh-16 sh-md-8 py-0">
-                <Row className="g-0 h-100 align-content-center">
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
-                    <div className="text-muted text-small d-md-none">Id</div>
-                    <NavLink to="/orders/detail" className="text-truncate h-100 d-flex align-items-center">
-                      1397
-                    </NavLink>
-                  </Col>
-                  <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Price</div>
-                    <div className="text-alternate">
-                      <span>
-                        <span className="text-small">$</span>
-                        128.25
-                      </span>
-                    </div>
-                  </Col>
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Date</div>
-                    <div className="text-alternate">17.09.2021</div>
-                  </Col>
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
-                    <div className="text-muted text-small d-md-none">Status</div>
-                    <Badge bg="outline-secondary">PENDING</Badge>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            <Card className="mb-2">
-              <Card.Body className="sh-16 sh-md-8 py-0">
-                <Row className="g-0 h-100 align-content-center">
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
-                    <div className="text-muted text-small d-md-none">Id</div>
-                    <NavLink to="/orders/detail" className="text-truncate h-100 d-flex align-items-center">
-                      1421
-                    </NavLink>
-                  </Col>
-                  <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Price</div>
-                    <div className="text-alternate">
-                      <span>
-                        <span className="text-small">$</span>
-                        252.75
-                      </span>
-                    </div>
-                  </Col>
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Date</div>
-                    <div className="text-alternate">17.09.2021</div>
-                  </Col>
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
-                    <div className="text-muted text-small d-md-none">Status</div>
-                    <Badge bg="outline-primary">DELIVERED</Badge>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            <Card className="mb-2">
-              <Card.Body className="sh-16 sh-md-8 py-0">
-                <Row className="g-0 h-100 align-content-center">
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
-                    <div className="text-muted text-small d-md-none">Id</div>
-                    <NavLink to="/orders/detail" className="text-truncate h-100 d-flex align-items-center">
-                      1438
-                    </NavLink>
-                  </Col>
-                  <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Price</div>
-                    <div className="text-alternate">
-                      <span>
-                        <span className="text-small">$</span>
-                        189.50
-                      </span>
-                    </div>
-                  </Col>
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                    <div className="text-muted text-small d-md-none">Date</div>
-                    <div className="text-alternate">17.09.2021</div>
-                  </Col>
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
-                    <div className="text-muted text-small d-md-none">Status</div>
-                    <Badge bg="outline-primary">DELIVERED</Badge>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
+            {orders.length > 0 &&
+              orders.map((order) => {
+                return order.shopOrders.map((shopOrder, index) => {
+                  return (
+                    <>
+                      <Card className="mb-2" key={index}>
+                        <Card.Body className="sh-16 sh-md-8 py-0">
+                          <Row className="g-0 h-100 align-content-center">
+                            <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
+                              <div className="text-muted text-small d-md-none">Id</div>
+                              <NavLink to={`/order/${shopOrder.id}`} className="text-truncate h-100 d-flex align-items-center">
+                                {index + 1}
+                              </NavLink>
+                            </Col>
+                            <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
+                              <div className="text-muted text-small d-md-none">ТРАТА</div>
+                              <div className="text-alternate">
+                                <span>
+                                  {/* <span className="text-small">$</span> */}
+                                  {shopOrder.amount} руб
+                                </span>
+                              </div>
+                            </Col>
+                            <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
+                              <div className="text-muted text-small d-md-none">Дата</div>
+                              <div className="text-alternate">
+                                {getDate(shopOrder.createdDate).date} {getDate(shopOrder.createdDate).time}
+                              </div>
+                            </Col>
+                            <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
+                              <div className="text-muted text-small d-md-none">Статус</div>
+                              <Badge bg="outline-primary">{shopOrder.status}</Badge>
+                            </Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </>
+                  );
+                });
+              })}
           </div>
           {/* Recent Orders End */}
 
           {/* History Start */}
-          <h2 className="small-title">History</h2>
-          <Card className="mb-5">
+          {/* <h2 className="small-title">History</h2> */}
+          {/* <Card className="mb-5">
             <Card.Body>
               <Row className="g-0">
                 <Col xs="auto" className="sw-1 d-flex flex-column justify-content-center align-items-center position-relative me-4">
@@ -535,11 +468,11 @@ const CustomersDetail = () => {
                 </Col>
               </Row>
             </Card.Body>
-          </Card>
+          </Card> */}
           {/* History End */}
 
           {/* Additional Info Start */}
-          <h2 className="small-title">Additional Info</h2>
+          {/* <h2 className="small-title">Additional Info</h2>
           <Card>
             <Card.Body>
               <div className="mb-3">
@@ -556,7 +489,7 @@ Rates the items a lot."
                 />
               </div>
             </Card.Body>
-          </Card>
+          </Card> */}
           {/* Additional Info End */}
         </Col>
       </Row>

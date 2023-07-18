@@ -14,9 +14,9 @@ const ProfileStandard = () => {
   const title = 'Профиль';
   const description = 'Страница профиля';
 
-  useEffect(() => {
-    dispatch(fetchProfileOwner(user.token));
-  }, [user.token, dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchProfileOwner(user.token));
+  // }, [user.token, dispatch]);
 
   useCustomLayout({ layout: LAYOUT.Boxed });
 
@@ -27,9 +27,14 @@ const ProfileStandard = () => {
       <div className="page-title-container">
         {/* <Row> */}
         {/* Title Start */}
-        <Col md="7">
-          <h1 className="mb-0 pb-0 display-4">Ваш аккаунт</h1>
-          {/* <BreadcrumbList items={breadcrumbs} /> */}
+        <Col className="col-auto mb-3 mb-sm-0 me-auto">
+          <a className="muted-link pb-1 d-inline-block hidden breadcrumb-back mb-2" href="/">
+            <CsLineIcons icon="chevron-left" size="13" />
+            <span className="align-middle text-small ms-1">Дашборд</span>
+          </a>
+          <h1 className="mb-0 pb-0 display-4" id="title">
+            {title}
+          </h1>
         </Col>
         {/* Title End */}
 
@@ -103,16 +108,18 @@ const ProfileStandard = () => {
                 <h2 className="small-title">Информация</h2>
                 <Row className="g-2 mb-5">
                   <Col sm="6" lg="3">
-                    <Card className="hover-border-primary">
-                      <Card.Body>
-                        <div className="heading mb-0 d-flex justify-content-between lh-1-25 mb-3">
-                          <span>Подписка</span>
-                          <CsLineIcons icon="check-square" className="text-primary" />
-                        </div>
-                        <div className="text-small text-muted mb-1">ТИП</div>
-                        <div className="cta-1 text-primary">{currentUser.subscription && currentUser.subscription[0].type}</div>
-                      </Card.Body>
-                    </Card>
+                    <NavLink style={{ padding: '0 0 0 0', lineHeight: 'inherit' }} href="/subscription">
+                      <Card className="hover-border-primary">
+                        <Card.Body>
+                          <div className="heading mb-0 d-flex justify-content-between lh-1-25 mb-3">
+                            <span>Подписка</span>
+                            <CsLineIcons icon="check-square" className="text-primary" />
+                          </div>
+                          <div className="text-small text-muted mb-1">ТИП</div>
+                          <div className="cta-1 text-primary">{currentUser.subscription && currentUser.subscription[0].type}</div>
+                        </Card.Body>
+                      </Card>
+                    </NavLink>
                   </Col>
                   <Col sm="6" lg="3">
                     <NavLink style={{ padding: '0 0 0 0', lineHeight: 'inherit' }} href="/company">

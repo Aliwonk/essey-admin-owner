@@ -29,7 +29,7 @@ const InvalidAccess = () => {
     if (isConfirmEmail) {
       dispatch(saveUser(currentUser));
     }
-  }, [isConfirmEmail, isError, currentUser, dispatch]);
+  }, [isError, currentUser, dispatch]);
 
   const rightSide = (
     <div className="sw-lg-80 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
@@ -67,12 +67,12 @@ const InvalidAccess = () => {
         ) : (
           <>
             <div className="mb-5">
-              <h2 className="display-2 text-primary">Ошибка потдверждения почты. Напишите нам!</h2>
+              <h2 className="display-2 text-primary">Ошибка потдверждения почты. Свяжитесь с нами</h2>
             </div>
             <div>
-              <NavLink to="/" className="btn btn-icon btn-icon-start btn-primary">
-                <CsLineIcons icon="arrow-left" /> <span>Вернуться</span>
-              </NavLink>
+              <a href="/" className="btn btn-icon btn-icon-start btn-primary">
+                <CsLineIcons icon="arrow-left" /> <span>Продолжить</span>
+              </a>
             </div>
           </>
         )}

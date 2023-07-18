@@ -7,11 +7,14 @@ const dashboard = lazy(() => import('views/dashboard/Dashboard'));
 const products = lazy(() => import('views/products/list/ProductsList'));
 const orders = lazy(() => import('views/orders/list/OrdersList'));
 const customers = lazy(() => import('views/customers/list/CustomersList'));
+const customer = lazy(() => import('views/customers/detail/CustomersDetail'));
 const detail = lazy(() => import('views/products/detail/ProductsDetail'));
 const profileStandard = lazy(() => import('views/profile/ProfileStandard'));
 const order = lazy(() => import('views/orders/detail/OrdersDetail'));
 const discount = lazy(() => import('views/discount/Discount'));
 const company = lazy(() => import('views/company/Company'));
+const subscription = lazy(() => import('views/subscription/Upgrade'));
+const productAdd = lazy(() => import('views/products/add/ProductAdd'));
 
 // const storefront = {
 //   home: lazy(() => import('views/storefront/home/Home')),
@@ -59,6 +62,11 @@ const routesAndMenuItems = {
       component: detail,
     },
     {
+      path: `${appRoot}/product-add`,
+      icon: 'cupcake',
+      component: productAdd,
+    },
+    {
       path: `${appRoot}/profile`,
       // exact: true,
       // redirect: true,
@@ -77,6 +85,11 @@ const routesAndMenuItems = {
       component: company,
     },
     {
+      path: `${appRoot}/subscription`,
+      icon: 'cupcake',
+      component: subscription,
+    },
+    {
       path: `${appRoot}/orders`,
       // exact: true,
       // redirect: true,
@@ -90,7 +103,7 @@ const routesAndMenuItems = {
       // ],
     },
     {
-      path: `${appRoot}/order`,
+      path: `${appRoot}/order/:id`,
       icon: 'cart',
       component: order,
     },
@@ -102,6 +115,19 @@ const routesAndMenuItems = {
       label: 'menu.customers',
       icon: 'user',
       component: customers,
+      // subs: [
+      //   { path: '/list', label: 'menu.list', component: customers.list },
+      //   { path: '/detail', label: 'menu.detail', component: customers.detail },
+      // ],
+    },
+    {
+      path: `${appRoot}/customer/:id`,
+      // exact: true,
+      // redirect: true,
+      // to: `${appRoot}/customers/list`,
+      // label: 'menu.customer',
+      // icon: 'user',
+      component: customer,
       // subs: [
       //   { path: '/list', label: 'menu.list', component: customers.list },
       //   { path: '/detail', label: 'menu.detail', component: customers.detail },
@@ -130,12 +156,12 @@ const routesAndMenuItems = {
     //   label: 'menu.shipping',
     //   icon: 'shipping',
     // },
-    {
-      path: `${appRoot}/discount`,
-      component: discount,
-      label: 'menu.discount',
-      icon: 'tag',
-    },
+    // {
+    //   path: `${appRoot}/discount`,
+    //   component: discount,
+    //   label: 'menu.discount',
+    //   icon: 'tag',
+    // },
     // {
     //   path: `${appRoot}/settings`,
     //   component: settings.home,

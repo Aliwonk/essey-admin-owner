@@ -4,7 +4,7 @@ export const IS_DEMO = false;
 export const IS_AUTH_GUARD_ACTIVE = true;
 export const SERVICE_URL = '/app';
 export const USE_MULTI_LANGUAGE = true;
-export const DEFAUTL_BACKEND_URL = 'https://essey-api.site';
+export const DEFAUTL_BACKEND_URL = 'http://localhost:3000';
 
 // For detailed information: https://github.com/nfl/react-helmet#reference-guide
 export const REACT_HELMET_PROPS = {
@@ -43,6 +43,30 @@ export const DEFAUTL_BACKEND_API = {
   RESET_PASSWORD: `${DEFAUTL_BACKEND_URL}/auth/owner/reset`,
   CREATE_NEW_PASSWORD: `${DEFAUTL_BACKEND_URL}/auth/owner/reset`,
   CREATE_COMPANY: `${DEFAUTL_BACKEND_URL}/auth/shop/registration`,
+  COMPANY: {
+    GET_INF: `${DEFAUTL_BACKEND_URL}/shop`,
+    UPDATE: `${DEFAUTL_BACKEND_URL}/shop/update`,
+    GET_CLIENTS: `${DEFAUTL_BACKEND_URL}/shop/clients`,
+    UPDATE_ACTIVE: `${DEFAUTL_BACKEND_URL}/shop/active`,
+    UPDATE_ACTIVE_PLANS: `${DEFAUTL_BACKEND_URL}/shop/active-plans`,
+  },
+  ORDERS: {
+    GET_ONE: `${DEFAUTL_BACKEND_URL}/orders/one`,
+    GET_LIST: `${DEFAUTL_BACKEND_URL}/orders/shop`,
+    UPDATE: `${DEFAUTL_BACKEND_URL}/orders/update`,
+    GET_USER_ORDER_SHOP: `${DEFAUTL_BACKEND_URL}/orders/user-shop`,
+  },
+  PRODUCT: {
+    CREATE: `${DEFAUTL_BACKEND_URL}/goods/create`,
+    GET_LIST: `${DEFAUTL_BACKEND_URL}/goods/all`,
+    GET_ONE: `${DEFAUTL_BACKEND_URL}/goods`,
+    UPDATE: `${DEFAUTL_BACKEND_URL}/goods/update`,
+    DELETE: `${DEFAUTL_BACKEND_URL}/goods/delete`,
+  },
+  CUSTOMERS: {
+    GET_INF_CUSTOMER: `${DEFAUTL_BACKEND_URL}/shop/client/profile`,
+    GET_ORDERS_CUSTOMER: `${DEFAUTL_BACKEND_URL}/orders/user`,
+  },
 };
 
 export const MAPBOX = {

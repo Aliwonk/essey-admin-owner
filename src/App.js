@@ -19,7 +19,7 @@ const App = () => {
 
   useEffect(() => {
     if (!user) {
-      window.location.href = '/register';
+      window.location.href = '/login';
     } else {
       dispatch(fetchProfileOwner(user.token));
     }

@@ -16,6 +16,10 @@ import scrollspyReducer from 'components/scrollspy/scrollspySlice';
 
 // import persist key
 import { REDUX_PERSIST_KEY } from 'config.js';
+import companyReducer from 'views/company/slice';
+import ordersReducer from 'views/orders/slice';
+import clientsReducer from 'views/customers/slice';
+import productsReducer from 'views/products/slice';
 
 const persistConfig = {
   key: REDUX_PERSIST_KEY,
@@ -33,6 +37,10 @@ const persistedReducer = persistReducer(
     menu: menuReducer,
     notification: notificationReducer,
     scrollspy: scrollspyReducer,
+    company: companyReducer,
+    orders: ordersReducer,
+    clients: clientsReducer,
+    products: productsReducer,
   })
 );
 const store = configureStore({

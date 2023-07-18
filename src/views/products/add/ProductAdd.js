@@ -1,99 +1,97 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.bubble.css';
 import Active from 'components/quill/Active';
-import { Row, Col, Button, Dropdown, Form, Card, Image } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, ButtonGroup } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import { useParams } from 'react-router-dom/cjs/react-router-dom';
-import { DEFAUTL_BACKEND_URL } from 'config';
+import { fetchCompanyInf } from 'views/company/slice/async';
 import Loader from 'components/loader';
-import DetailAttributeItem from './components/DetailAttributeItem';
-import DetailImage from './components/DetailImage';
-import DetailGallery from './components/DetailGallery';
-import { fetchDeleteProduct, fetchGetProduct, fetchUpdateProduct } from '../slice/async';
+import DetailImage from '../detail/components/DetailImage';
+import { fetchCreateProduct } from '../slice/async';
 
-const ProductsDetail = () => {
+const ProductAdd = () => {
   const dispatch = useDispatch();
-  const { product, isLoading, isLoadingUpdate, isLoadingDelete } = useSelector((state) => state.products);
-  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
+  const { currentUser, user } = useSelector((state) => state.auth);
+  const { isLoading, isCreated } = useSelector((state) => state.products);
   const title = 'Товар';
-  const description = 'Страница товара';
-  const { id } = useParams();
+  const description = 'Страница добавления продукта';
 
-  // Information product
-
+  // Category
   const [infProduct, setInfProduct] = useState({
     name: '',
-    description: '',
-    category: '',
     price: 0,
     unit: '',
-    goods_images: [],
+    description: '',
+    category: '',
   });
-  const [imageURL, setImageURL] = useState('');
 
-  useEffect(() => {
-    if (Object.keys(user).length > 0) {
+  function handelChange(event) {
+    if (event.target.localName === 'option') {
+      setInfProduct({
+        ...infProduct,
+        [event.target.attributes[0].value]: event.target.value,
+      });
+    } else {
+      setInfProduct({
+        ...infProduct,
+        [event.target.name]: event.target.value,
+      });
+    }
+  }
+
+  function onSubmit() {
+    const image = document.getElementsByName('image')[0];
+    const data = new FormData();
+    Object.keys(infProduct).forEach((key) => {
+      data.append(key, infProduct[key]);
+    });
+    data.append('goods_images', image.files[0]);
+
+    if (!isLoading) {
       dispatch(
-        fetchGetProduct({
-          productId: id,
+        fetchCreateProduct({
+          shopId: company.id,
           token: user.token,
+          data,
         })
-      );
+      ).then((result) => {
+        if (result.payload && result.payload.statusCode === 201) {
+          setInfProduct({
+            name: '',
+            category: '',
+            unit: '',
+            price: 0,
+            description: '',
+          });
+        }
+      });
     }
-  }, [user, dispatch, isLoadingUpdate]);
+  }
+
+  const [categoryGoods, setCategoryGoods] = useState([]);
 
   useEffect(() => {
-    if (Object.keys(product).length > 0) {
-      setInfProduct(product);
-      setImageURL(`${DEFAUTL_BACKEND_URL}/${product.goods_images[0].path}`);
+    if (Object.keys(currentUser).length > 0) {
+      dispatch(fetchCompanyInf(currentUser.list_shop[0].id));
     }
-  }, [product]);
+  }, [currentUser, dispatch]);
+
+  useEffect(() => {
+    if (Object.keys(company).length > 0) {
+      const goods = company.goods.map((item) => item.category);
+      const categories = Array.from(new Set(goods));
+      setCategoryGoods(categories);
+    }
+  }, [company]);
 
   useEffect(() => {
     console.log(infProduct);
   }, [infProduct]);
-
-  function handleChange(event) {
-    setInfProduct({
-      ...infProduct,
-      [event.target.name]: event.target.value,
-    });
-  }
-
-  function submit() {
-    if (!isLoadingUpdate) {
-      const image = document.getElementsByName('image')[0];
-      const data = new FormData();
-      console.log(image.files);
-
-      Object.keys(infProduct).forEach((key) => {
-        data.append(key, infProduct[key]);
-      });
-
-      data.append('image', image.files[0]);
-
-      dispatch(
-        fetchUpdateProduct({
-          productId: id,
-          token: user.token,
-          data,
-        })
-      );
-    }
-  }
-
-  // Category
-  const [selectValue, setSelectValue] = useState({ value: 'Sourdough', label: 'Sourdough' });
-  const options = [
-    { value: 'Whole Wheat', label: 'Whole Wheat' },
-    { value: 'Rye', label: 'Rye' },
-    { value: 'Sourdough', label: 'Sourdough' },
-  ];
 
   // Editor
   const theme = 'bubble';
@@ -146,7 +144,7 @@ const ProductsDetail = () => {
               <span className="align-middle text-small ms-1">Список продуктов</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
-              {title}
+              Новый товар
             </h1>
           </Col>
           {/* Title End */}
@@ -157,8 +155,8 @@ const ProductsDetail = () => {
               <CsLineIcons icon="save" />
             </Button> */}
             <div className="btn-group ms-1 w-100 w-sm-auto">
-              <Button onClick={() => submit()} variant="outline-primary" className="btn-icon btn-icon-start w-100 w-sm-auto">
-                {isLoadingUpdate ? (
+              <Button onClick={() => onSubmit()} variant={!isLoading ? 'outline-primary' : 'primary'} className="btn-icon btn-icon-start w-100 w-sm-auto">
+                {isLoading ? (
                   <Loader
                     style={{
                       display: 'flex',
@@ -174,54 +172,10 @@ const ProductsDetail = () => {
                   />
                 ) : (
                   <>
-                    <CsLineIcons icon="save" /> <span>Обновить</span>
+                    <CsLineIcons icon="plus" /> <span>Добавить</span>
                   </>
                 )}
               </Button>
-              <Button
-                onClick={() => {
-                  dispatch(
-                    fetchDeleteProduct({
-                      productId: id,
-                      token: Object.keys(user).length > 0 && user.token,
-                    })
-                  ).then((result) => {
-                    if (result.payload && result.payload.statusCode === 200) {
-                      window.location.href = '/products';
-                    }
-                  });
-                }}
-                variant="outline-primary"
-                className="btn-icon btn-icon-start w-100 w-sm-auto"
-              >
-                {isLoadingDelete ? (
-                  <Loader
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      width: '20px',
-                      height: '15px',
-                    }}
-                    styleImg={{
-                      width: '250%',
-                      height: '250%',
-                    }}
-                  />
-                ) : (
-                  <>
-                    <CsLineIcons icon="close" /> <span>Удалить</span>
-                  </>
-                )}
-              </Button>
-              {/* <Dropdown>
-                <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-                <Dropdown.Menu>
-                  <Dropdown.Item>Move</Dropdown.Item>
-                  <Dropdown.Item>Archive</Dropdown.Item>
-                  <Dropdown.Item>Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown> */}
             </div>
           </Col>
           {/* Top Buttons End */}
@@ -231,52 +185,66 @@ const ProductsDetail = () => {
       <Row>
         <Col xl="8">
           {/* Product Info Start */}
-          <h2 className="small-title">Данные продукта</h2>
+          <h2 className="small-title">Данные товара</h2>
           <Card className="mb-5">
-            {!isLoading ? (
-              <Card.Body>
-                <Form>
-                  <div className="mb-3">
-                    <Form.Label>Название</Form.Label>
-                    <Form.Control type="text" name="name" value={infProduct.name} onChange={(e) => handleChange(e)} />
-                  </div>
-                  <div className="mb-3">
-                    <Form.Label>Категория</Form.Label>
+            <Card.Body>
+              <Form>
+                <div className="mb-3">
+                  <Form.Label>Название</Form.Label>
+                  <Form.Control placeholder="Введите название" value={infProduct.name} name="name" onChange={(e) => handelChange(e)} type="text" />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Категория</Form.Label>
+                  <Dropdown style={{ width: '100%' }} as={ButtonGroup}>
                     <Form.Control
-                      name="category"
-                      classNamePrefix="react-select"
-                      options={options}
+                      style={{ borderBottomRightRadius: 0, borderTopRightRadius: 0 }}
+                      placeholder="Введите или выберите категорию"
                       value={infProduct.category}
-                      onChange={(e) => handleChange(e)}
+                      name="category"
+                      onChange={(e) => handelChange(e)}
                     />
-                  </div>
-                  <div className="mb-3">
-                    <Form.Label>Описание</Form.Label>
-                    <Form.Control name="description" as="textarea" rows={4} value={infProduct.description} onChange={(e) => handleChange(e)} />
-                  </div>
-                  {/* <div>
-                  <Form.Label>Title</Form.Label>
-                  <div ref={quillRef} className="sh-25 html-editor html-editor-bubble pe-2" />
+                    {categoryGoods.length > 0 && (
+                      <>
+                        <Dropdown.Toggle split variant="dark" id="dropdown-split-basic" />
+                        <Dropdown.Menu>
+                          {categoryGoods.map((category, index) => (
+                            <Dropdown.Item name="category" value={category} as="option" key={index} onClick={(e) => handelChange(e)}>
+                              {category}
+                            </Dropdown.Item>
+                          ))}
+                          {/* <Dropdown.Item>Action</Dropdown.Item>
+                      <Dropdown.Item>Another action</Dropdown.Item>
+                      <Dropdown.Item>Something else</Dropdown.Item> */}
+                        </Dropdown.Menu>
+                      </>
+                    )}
+                  </Dropdown>
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Единица</Form.Label>
+                  <Form.Control placeholder="Введите единицу" value={infProduct.unit} name="unit" onChange={(e) => handelChange(e)} type="text" />
+                </div>
+                {/* <div className="mb-3">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={4}
+                    defaultValue="Dessert gummies soufflé toffee cake. Sesame snaps marzipan sesame snaps gummies oat cake sesame snaps."
+                  />
                 </div> */}
-                </Form>
-              </Card.Body>
-            ) : (
-              <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                <Loader
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '25px',
-                    height: '35px',
-                  }}
-                  styleImg={{
-                    width: '250%',
-                    height: '250%',
-                  }}
-                />
-              </div>
-            )}
+                <div>
+                  <Form.Label>Описание</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    placeholder="Введите описание"
+                    value={infProduct.description}
+                    name="description"
+                    onChange={(e) => handelChange(e)}
+                    className="sh-25 html-editor html-editor-bubble pe-2"
+                  />
+                </div>
+              </Form>
+            </Card.Body>
           </Card>
           {/* Product Info End */}
 
@@ -363,35 +331,18 @@ const ProductsDetail = () => {
           {/* Price Start */}
           <h2 className="small-title">Цена</h2>
           <Card className="mb-5">
-            {!isLoading ? (
-              <Card.Body>
-                <Form className="mb-n3">
-                  <div className="mb-3">
-                    <Form.Control name="price" type="text" defaultValue="0" value={infProduct.price} onChange={(e) => handleChange(e)} />
-                  </div>
-                  {/* <div className="mb-3">
+            <Card.Body>
+              <Form className="mb-n3">
+                <div className="mb-3">
+                  {/* <Form.Label>Tax Excluded</Form.Label> */}
+                  <Form.Control type="text" defaultValue="0" value={infProduct.price} name="price" onChange={(e) => handelChange(e)} />
+                </div>
+                {/* <div className="mb-3">
                   <Form.Label>Tax Included</Form.Label>
                   <Form.Control type="text" defaultValue="20,40" />
                 </div> */}
-                </Form>
-              </Card.Body>
-            ) : (
-              <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                <Loader
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '25px',
-                    height: '35px',
-                  }}
-                  styleImg={{
-                    width: '250%',
-                    height: '250%',
-                  }}
-                />
-              </div>
-            )}
+              </Form>
+            </Card.Body>
           </Card>
           {/* Price End */}
 
@@ -422,49 +373,12 @@ const ProductsDetail = () => {
           {/* Image Start */}
           <h2 className="small-title">Рисунок</h2>
           <Card className="mb-5">
-            {!isLoading ? (
-              <Card.Body>
-                <Card.Img variant="top" src={imageURL} />
-                <Button className="mt-4" style={{ position: 'relative' }}>
-                  Изменить
-                  <input
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      opacity: 0,
-                      top: '0%',
-                      left: '0%',
-                      position: 'absolute',
-                    }}
-                    name="image"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const url = window.URL.createObjectURL(e.target.files[0]);
-                      setImageURL(url);
-                    }}
-                  />
-                </Button>
-                {/* <DetailImage urlImage={Object.keys(product).length > 0 && `${DEFAUTL_BACKEND_URL}/${product.goods_images[0].path}`} title="Рисунок" /> */}
-                {/* <img src={`${DEFAUTL_BACKEND_URL}/${product.goods_images[0].path}`} alt="product" className="card-img card-img-horizontal sw-11 h-100" /> */}
-              </Card.Body>
-            ) : (
-              <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
-                <Loader
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '25px',
-                    height: '35px',
-                  }}
-                  styleImg={{
-                    width: '250%',
-                    height: '250%',
-                  }}
-                />
-              </div>
-            )}
+            <Form.Control
+              style={{ minHeight: 35, paddingLeft: 8, backgroundColor: 'white', border: '1px solid #dddddd' }}
+              type="file"
+              name="image"
+              title="Выберите картинку"
+            />
           </Card>
           {/* Image End */}
 
@@ -482,4 +396,4 @@ const ProductsDetail = () => {
   );
 };
 
-export default ProductsDetail;
+export default ProductAdd;
