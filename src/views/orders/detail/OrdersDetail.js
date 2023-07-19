@@ -82,8 +82,52 @@ const OrdersDetail = () => {
                         Принят
                       </Dropdown.Item>
                     )}
-                    {order.status !== 'Отправлен' && <Dropdown.Item>Отправлен</Dropdown.Item>}
-                    {order.status !== 'Доставлен' && <Dropdown.Item>Доставлен</Dropdown.Item>}
+                    {order.status !== 'Отправлен' && (
+                      <Dropdown.Item
+                        onClick={() => {
+                          if (Object.keys(user).length > 0) {
+                            dispatch(
+                              fetchUpdateOrder({
+                                id,
+                                token: user.token,
+                                status: 'Отправлен',
+                              })
+                            );
+                            dispatch(
+                              fetchGetOrder({
+                                id,
+                                token: user.token,
+                              })
+                            );
+                          }
+                        }}
+                      >
+                        Отправлен
+                      </Dropdown.Item>
+                    )}
+                    {order.status !== 'Доставлен' && (
+                      <Dropdown.Item
+                        onClick={() => {
+                          if (Object.keys(user).length > 0) {
+                            dispatch(
+                              fetchUpdateOrder({
+                                id,
+                                token: user.token,
+                                status: 'Доставлен',
+                              })
+                            );
+                            dispatch(
+                              fetchGetOrder({
+                                id,
+                                token: user.token,
+                              })
+                            );
+                          }
+                        }}
+                      >
+                        Доставлен
+                      </Dropdown.Item>
+                    )}
                   </Dropdown.Menu>
                 </Dropdown>
                 {/* <Dropdown className="ms-1">
@@ -250,7 +294,7 @@ const OrdersDetail = () => {
                     order.goods.map((goods, index) => {
                       return (
                         <>
-                          <Row className="g-0 sh-9 mb-3">
+                          <Row className="g-0 sh-9 mb-3" key={index}>
                             <Col xs="auto">
                               <img src={`${DEFAUTL_BACKEND_URL}${goods.goods.goods_images[0].path}`} className="card-img rounded-md h-100 sw-13" alt="thumb" />
                             </Col>

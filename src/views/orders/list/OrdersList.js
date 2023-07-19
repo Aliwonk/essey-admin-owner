@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
@@ -11,7 +12,7 @@ import { fetchOrdersCompany } from '../slice/async';
 
 const OrdersList = () => {
   const dispatch = useDispatch();
-  const { orders, isLoading } = useSelector((state) => state.orders);
+  const { orders, isLoading, isError } = useSelector((state) => state.orders);
   const [shopOrders, setShopOrders] = useState(orders);
   const { currentUser } = useSelector((state) => state.auth);
   const title = 'Список заказов';

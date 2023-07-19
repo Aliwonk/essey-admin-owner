@@ -1,3 +1,4 @@
+import { DEFAUTL_BACKEND_URL } from 'config';
 import { fetchGetOrder, fetchOrdersCompany, fetchUpdateOrder } from './async';
 
 const { createSlice } = require('@reduxjs/toolkit');
