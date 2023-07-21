@@ -15,6 +15,7 @@ const Dashboard = () => {
   const { company, isLoading } = useSelector((state) => state.company);
   const [companyOrders, setCompanyOrders] = useState([]);
   const [profit, setProfit] = useState(0);
+  const [todayProfit, setTodayProfit] = useState(0);
   const title = 'Дашборд';
   const description = 'Страница дашборд';
 
@@ -26,22 +27,38 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (Object.keys(company).length > 0) {
-      const x = [];
+      const orders = [];
       for (let i = 0; i < company.orders.length && i < 5; i += 1) {
-        x.push(company.orders[i]);
+        orders.push(company.orders[i]);
       }
 
-      setCompanyOrders(x);
-      const totalProift = company.orders.reduce((prev, curr) => {
+      setCompanyOrders(orders);
+      const totalProfit = company.orders.reduce((prev, curr) => {
         const total = curr.amount + prev;
-        return total;
+        if (curr.status === 'Доставлен') {
+          return total;
+        }
+        return prev + 0;
       }, 0);
 
-      setProfit(totalProift);
+      const totalTodayProfit = company.orders.reduce((prev, curr) => {
+        const total = curr.amount + prev;
+        if (
+          curr.status === 'Доставлен' &&
+          (new Date(curr.createdDate).getDate() === new Date().getDate() || new Date(curr.updatedDate).getDate() === new Date().getDate())
+        ) {
+          return total;
+        }
+        return prev + 0;
+      }, 0);
+
+      setProfit(totalProfit);
+      setTodayProfit(totalTodayProfit);
     }
   }, [isLoading]);
 
   useEffect(() => {
+    console.log(company);
     console.log(companyOrders);
   }, [companyOrders]);
 
@@ -81,8 +98,37 @@ const Dashboard = () => {
                 <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
                   <CsLineIcons icon="dollar" className="text-primary" />
                 </div>
-                <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Прибыль</div>
+                <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Общая прибыль</div>
                 <div className="text-primary cta-4">{profit} руб</div>
+              </Card.Body>
+            ) : (
+              <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '25px',
+                    height: '35px',
+                  }}
+                  styleImg={{
+                    width: '250%',
+                    height: '250%',
+                  }}
+                />
+              </div>
+            )}
+          </Card>
+        </Col>
+        <Col xs="6" md="4" lg="2">
+          <Card className="h-100 hover-scale-up cursor-pointer">
+            {!isLoading.get ? (
+              <Card.Body className="d-flex flex-column align-items-center">
+                <div className="sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center border border-primary mb-4">
+                  <CsLineIcons icon="dollar" className="text-primary" />
+                </div>
+                <div className="mb-1 d-flex align-items-center text-alternate text-small lh-1-25">Прибыль за сегодня</div>
+                <div className="text-primary cta-4">{todayProfit} руб</div>
               </Card.Body>
             ) : (
               <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
@@ -208,6 +254,24 @@ const Dashboard = () => {
           {Object.keys(company).length > 0 &&
             company.orders.length > 0 &&
             companyOrders.map((order, index) => {
+              let bageCol = 'secondary';
+
+              switch (order.status) {
+                case 'Принят':
+                  bageCol = 'primary';
+                  break;
+                case 'Отправлен':
+                  bageCol = 'info';
+                  break;
+                case 'Доставлен':
+                  bageCol = 'success';
+                  break;
+                case 'Отменен':
+                  bageCol = 'danger';
+                  break;
+                default:
+                  break;
+              }
               return (
                 <>
                   <Card className="mb-2 sh-15 sh-md-6" key={index}>
@@ -219,7 +283,7 @@ const Dashboard = () => {
                           </NavLink>
                         </Col>
                         <Col xs="2" md="3" className="d-flex align-items-center text-muted mb-1 mb-md-0 justify-content-end justify-content-md-start">
-                          <Badge bg="outline-primary" className="me-1">
+                          <Badge bg={bageCol} className="me-1">
                             {order.status}
                           </Badge>
                         </Col>

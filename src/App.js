@@ -18,7 +18,6 @@ const App = () => {
   const { currentUser, user, isProfile } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    console.log(user);
     if (!user || user.token === 'undefined') {
       window.location.href = '/login';
     } else {

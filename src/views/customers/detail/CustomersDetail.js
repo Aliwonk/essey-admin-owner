@@ -33,14 +33,18 @@ const CustomersDetail = () => {
   }, [dispatch, id, user]);
 
   useEffect(() => {
-    console.log(client);
-    const ordersShop = clientOrders.filter((order) => order.shopOrders[0].shop.id === currentUser.list_shop[0].id);
-    const totalAmountOrders = ordersShop.reduce((curr, prev) => {
-      const total = prev.amount + curr;
-      return total;
-    }, 0);
-    setOrders(ordersShop);
-    setTotalAmount(totalAmountOrders);
+    if (Object.keys(currentUser).length > 0) {
+      const ordersShop = clientOrders.filter((order) => order.shopOrders[0].shop.id === currentUser.list_shop[0].id);
+      const totalAmountOrders = ordersShop.reduce((curr, prev) => {
+        const total = prev.amount + curr;
+        if (prev.shopOrders[0].status === 'Доставлен') {
+          return total;
+        }
+        return curr + 0;
+      }, 0);
+      setOrders(ordersShop);
+      setTotalAmount(totalAmountOrders);
+    }
   }, [client, clientOrders]);
   // Tags
   const [tags, setTags] = useState([
@@ -266,8 +270,26 @@ const CustomersDetail = () => {
           </div>
           <div className="mb-5">
             {orders.length > 0 &&
-              orders.map((order) => {
-                return order.shopOrders.map((shopOrder, index) => {
+              orders.map((order, index) => {
+                return order.shopOrders.map((shopOrder, indexShop) => {
+                  let bageCol = 'secondary';
+
+                  switch (shopOrder.status) {
+                    case 'Принят':
+                      bageCol = 'primary';
+                      break;
+                    case 'Отправлен':
+                      bageCol = 'info';
+                      break;
+                    case 'Доставлен':
+                      bageCol = 'success';
+                      break;
+                    case 'Отменен':
+                      bageCol = 'danger';
+                      break;
+                    default:
+                      break;
+                  }
                   return (
                     <>
                       <Card className="mb-2" key={index}>
@@ -296,7 +318,7 @@ const CustomersDetail = () => {
                             </Col>
                             <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
                               <div className="text-muted text-small d-md-none">Статус</div>
-                              <Badge bg="outline-primary">{shopOrder.status}</Badge>
+                              <Badge bg={bageCol}>{shopOrder.status}</Badge>
                             </Col>
                           </Row>
                         </Card.Body>

@@ -10,6 +10,8 @@ import { getDate } from 'utils/date';
 import Loader from 'components/loader';
 import { fetchOrdersCompany } from '../slice/async';
 
+// const socket = io('http://localhost:3000');
+
 const OrdersList = () => {
   const dispatch = useDispatch();
   const { orders, isLoading, isError } = useSelector((state) => state.orders);
@@ -39,6 +41,21 @@ const OrdersList = () => {
       setSelectedItems([]);
     }
   };
+
+  // useEffect(() => {
+  //   if (Object.keys(currentUser).length > 0) {
+  //     socket.on('connect', () => {
+  //       console.log('connect');
+  //       socket.emit('orders-shop', {
+  //         idShop: currentUser.list_shop[0].id,
+  //       });
+  //     });
+
+  //     socket.on('orders', (event) => {
+  //       console.log(event);
+  //     })
+  //   }
+  // }, [currentUser]);
 
   useEffect(() => {
     if (Object.keys(currentUser).length > 0) {
@@ -172,6 +189,24 @@ const OrdersList = () => {
       {/* List Items Start */}
       {!isLoading && orders.length > 0 ? (
         shopOrders.map((order, index) => {
+          let bageCol = 'secondary';
+
+          switch (order.status) {
+            case 'Принят':
+              bageCol = 'primary';
+              break;
+            case 'Отправлен':
+              bageCol = 'info';
+              break;
+            case 'Доставлен':
+              bageCol = 'success';
+              break;
+            case 'Отменен':
+              bageCol = 'danger';
+              break;
+            default:
+              break;
+          }
           // console.log(order.client);
           return (
             <>
@@ -208,7 +243,7 @@ const OrdersList = () => {
                     <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
                       <div className="text-muted text-small d-md-none">Статус</div>
                       <div>
-                        <Badge bg="outline-primary">{order.status}</Badge>
+                        <Badge bg={bageCol}>{order.status}</Badge>
                       </div>
                     </Col>
                     <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">

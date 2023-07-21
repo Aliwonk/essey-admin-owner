@@ -59,7 +59,7 @@ const OrdersDetail = () => {
                     Изменить статус
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {order.status !== 'Принят' && (
+                    {order.status !== 'Принят' && order.status !== 'Отправлен' && (
                       <Dropdown.Item
                         onClick={() => {
                           if (Object.keys(user).length > 0) {
@@ -68,12 +68,6 @@ const OrdersDetail = () => {
                                 id,
                                 token: user.token,
                                 status: 'Принят',
-                              })
-                            );
-                            dispatch(
-                              fetchGetOrder({
-                                id,
-                                token: user.token,
                               })
                             );
                           }
@@ -93,12 +87,6 @@ const OrdersDetail = () => {
                                 status: 'Отправлен',
                               })
                             );
-                            dispatch(
-                              fetchGetOrder({
-                                id,
-                                token: user.token,
-                              })
-                            );
                           }
                         }}
                       >
@@ -114,12 +102,6 @@ const OrdersDetail = () => {
                                 id,
                                 token: user.token,
                                 status: 'Доставлен',
-                              })
-                            );
-                            dispatch(
-                              fetchGetOrder({
-                                id,
-                                token: user.token,
                               })
                             );
                           }
@@ -207,6 +189,27 @@ const OrdersDetail = () => {
                     </Card.Body>
                   </Card>
                 </Col>
+                {(order.status === 'Доставлен' || order.status === 'Отменен') && (
+                  <Col sm="6">
+                    <Card className="sh-13 sh-lg-15 sh-xl-14">
+                      <Card.Body className="h-100 py-3 d-flex align-items-center">
+                        <Row className="g-0 align-items-center">
+                          <Col xs="auto" className="pe-3">
+                            <div className="border border-primary sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center">
+                              <CsLineIcons icon="calendar" className="text-primary" />
+                            </div>
+                          </Col>
+                          <Col>
+                            <div className="d-flex align-items-center lh-1-25">Дата завершения</div>
+                            <div className="text-primary">
+                              {getDate(order.updatedDate).date} {getDate(order.updatedDate).time}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                )}
                 <Col sm="6">
                   <Card className="sh-13 sh-lg-15 sh-xl-14">
                     <Card.Body className="h-100 py-3 d-flex align-items-center">
