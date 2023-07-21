@@ -272,11 +272,11 @@ const CustomersDetail = () => {
             {orders.length > 0 &&
               orders.map((order, index) => {
                 return order.shopOrders.map((shopOrder, indexShop) => {
-                  let bageCol = 'secondary';
+                  let bageCol = 'warning';
 
                   switch (shopOrder.status) {
                     case 'Принят':
-                      bageCol = 'primary';
+                      bageCol = 'secondary';
                       break;
                     case 'Отправлен':
                       bageCol = 'info';

@@ -10,13 +10,16 @@ import { getDate } from 'utils/date';
 import Loader from 'components/loader';
 import { fetchOrdersCompany } from '../slice/async';
 
-// const socket = io('http://localhost:3000');
+const socket = io('http://localhost:3000');
 
 const OrdersList = () => {
   const dispatch = useDispatch();
   const { orders, isLoading, isError } = useSelector((state) => state.orders);
   const [shopOrders, setShopOrders] = useState(orders);
   const { currentUser } = useSelector((state) => state.auth);
+  const [badgeColoStatusOrders, setBadgeColoStatusOrders] = useState(window.localStorage.getItem('badge-color-status-orders') || 'dark');
+  const filterStatus = window.localStorage.getItem('status-orders');
+  const [statusOrders, setSatusOrders] = useState(filterStatus !== undefined ? filterStatus : 'Все');
   const title = 'Список заказов';
   const description = 'Страница списка заказов';
 
@@ -42,24 +45,66 @@ const OrdersList = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (Object.keys(currentUser).length > 0) {
-  //     socket.on('connect', () => {
-  //       console.log('connect');
-  //       socket.emit('orders-shop', {
-  //         idShop: currentUser.list_shop[0].id,
-  //       });
-  //     });
-
-  //     socket.on('orders', (event) => {
-  //       console.log(event);
-  //     })
-  //   }
-  // }, [currentUser]);
+  function changeStatus(status) {
+    setSatusOrders(status);
+    window.localStorage.setItem('status-orders', status);
+    if (Object.keys(currentUser).length > 0) {
+      dispatch(fetchOrdersCompany(`${currentUser.list_shop[0].id}?status=${status}`));
+    }
+    switch (status) {
+      case 'В обработке':
+        setBadgeColoStatusOrders('warning');
+        window.localStorage.setItem('badge-color-status-orders', 'warning');
+        break;
+      case 'Принят':
+        setBadgeColoStatusOrders('secondary');
+        window.localStorage.setItem('badge-color-status-orders', 'secondary');
+        break;
+      case 'Отправлен':
+        setBadgeColoStatusOrders('info');
+        window.localStorage.setItem('badge-color-status-orders', 'info');
+        break;
+      case 'Доставлен':
+        setBadgeColoStatusOrders('success');
+        window.localStorage.setItem('badge-color-status-orders', 'success');
+        break;
+      case 'Отменен':
+        setBadgeColoStatusOrders('danger');
+        window.localStorage.setItem('badge-color-status-orders', 'danger');
+        break;
+      default:
+        setBadgeColoStatusOrders('dark');
+        window.localStorage.setItem('badge-color-status-orders', 'dark');
+        break;
+    }
+  }
 
   useEffect(() => {
     if (Object.keys(currentUser).length > 0) {
-      dispatch(fetchOrdersCompany(currentUser.list_shop[0].id));
+      socket.on('connect', () => {
+        console.log('connect');
+      });
+
+      socket.on('new-order', (data) => {
+        if (data === true) {
+          const player = document.getElementById('audio-notification').play();
+
+          if (player !== undefined) {
+            player.then((_) => {}).catch((error) => {});
+          }
+          if (Object.keys(currentUser).length > 0) {
+            dispatch(fetchOrdersCompany(`${currentUser.list_shop[0].id}?status=В обработке`));
+            window.localStorage.setItem('status-orders', 'В обработке');
+            window.localStorage.setItem('badge-color-status-orders', 'warning');
+          }
+        }
+      });
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (Object.keys(currentUser).length > 0) {
+      dispatch(fetchOrdersCompany(`${currentUser.list_shop[0].id}?status=${filterStatus}`));
     }
   }, [currentUser, dispatch]);
 
@@ -149,6 +194,36 @@ const OrdersList = () => {
           </Dropdown> */}
           {/* Export Dropdown End */}
 
+          {/* Status start */}
+          <Dropdown style={{ fontSize: '1.2em' }} align={{ xs: 'end' }} className="d-inline-block ms-1">
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Фильтр по статусу</Tooltip>}>
+              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-16">
+                <Badge bg={badgeColoStatusOrders}>{statusOrders}</Badge>
+              </Dropdown.Toggle>
+            </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item onClick={() => changeStatus('В обработке')}>
+                <Badge bg="warning">В обработке</Badge>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => changeStatus('Принят')}>
+                <Badge bg="secondary">Принят</Badge>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => changeStatus('Отправлен')}>
+                <Badge bg="info">Отправлен</Badge>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => changeStatus('Доставлен')}>
+                <Badge bg="success">Доставлен</Badge>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => changeStatus('Отменен')}>
+                <Badge bg="danger">Отменен</Badge>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => changeStatus('Все')}>
+                <Badge bg="dark">Все</Badge>
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          {/* Status end */}
+
           {/* Length Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Количество предметов</Tooltip>}>
@@ -187,90 +262,96 @@ const OrdersList = () => {
       {/* List Header End */}
 
       {/* List Items Start */}
-      {!isLoading && orders.length > 0 ? (
-        shopOrders.map((order, index) => {
-          let bageCol = 'secondary';
-
-          switch (order.status) {
-            case 'Принят':
-              bageCol = 'primary';
-              break;
-            case 'Отправлен':
-              bageCol = 'info';
-              break;
-            case 'Доставлен':
-              bageCol = 'success';
-              break;
-            case 'Отменен':
-              bageCol = 'danger';
-              break;
-            default:
-              break;
-          }
-          // console.log(order.client);
-          return (
-            <>
-              <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`}>
-                <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-                  <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(1)}>
-                    <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                      <div className="text-muted text-small d-md-none">Id</div>
-                      <NavLink to={`/order/${order.id}`} className="text-truncate h-100 d-flex align-items-center">
-                        {index + 1}
-                      </NavLink>
-                    </Col>
-                    <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                      <div className="text-muted text-small d-md-none">Клиент</div>
-                      <div className="text-alternate">
-                        {order.client && order.client.lastName} {order.client && order.client.firstName}
-                      </div>
-                    </Col>
-                    <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                      <div className="text-muted text-small d-md-none">Покупка</div>
-                      <div className="text-alternate">
-                        <span>
-                          {/* <span className="text-small">$</span> */}
-                          {order.amount} руб
-                        </span>
-                      </div>
-                    </Col>
-                    <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                      <div className="text-muted text-small d-md-none">Дата</div>
-                      <div className="text-alternate">
-                        {getDate(order.createdDate).date} {getDate(order.createdDate).time}
-                      </div>
-                    </Col>
-                    <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                      <div className="text-muted text-small d-md-none">Статус</div>
-                      <div>
-                        <Badge bg={bageCol}>{order.status}</Badge>
-                      </div>
-                    </Col>
-                    <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                      <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(1)} onChange={() => {}} />
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </>
-          );
-        })
+      {shopOrders.length === 0 ? (
+        <></>
       ) : (
-        <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
-          <Loader
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '25px',
-              height: '35px',
-            }}
-            styleImg={{
-              width: '250%',
-              height: '250%',
-            }}
-          />
-        </div>
+        <>
+          {!isLoading && orders.length > 0 ? (
+            shopOrders.map((order, index) => {
+              let bageCol = 'warning';
+
+              switch (order.status) {
+                case 'Принят':
+                  bageCol = 'secondary';
+                  break;
+                case 'Отправлен':
+                  bageCol = 'info';
+                  break;
+                case 'Доставлен':
+                  bageCol = 'success';
+                  break;
+                case 'Отменен':
+                  bageCol = 'danger';
+                  break;
+                default:
+                  break;
+              }
+              // console.log(order.client);
+              return (
+                <>
+                  <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`}>
+                    <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
+                      <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(1)}>
+                        <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
+                          <div className="text-muted text-small d-md-none">Id</div>
+                          <NavLink to={`/order/${order.id}`} className="text-truncate h-100 d-flex align-items-center">
+                            {index + 1}
+                          </NavLink>
+                        </Col>
+                        <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+                          <div className="text-muted text-small d-md-none">Клиент</div>
+                          <div className="text-alternate">
+                            {order.client && order.client.lastName} {order.client && order.client.firstName}
+                          </div>
+                        </Col>
+                        <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+                          <div className="text-muted text-small d-md-none">Покупка</div>
+                          <div className="text-alternate">
+                            <span>
+                              {/* <span className="text-small">$</span> */}
+                              {order.amount} руб
+                            </span>
+                          </div>
+                        </Col>
+                        <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+                          <div className="text-muted text-small d-md-none">Дата</div>
+                          <div className="text-alternate">
+                            {getDate(order.createdDate).date} {getDate(order.createdDate).time}
+                          </div>
+                        </Col>
+                        <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+                          <div className="text-muted text-small d-md-none">Статус</div>
+                          <div>
+                            <Badge bg={bageCol}>{order.status}</Badge>
+                          </div>
+                        </Col>
+                        <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+                          <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(1)} onChange={() => {}} />
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </>
+              );
+            })
+          ) : (
+            <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
+              <Loader
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '25px',
+                  height: '35px',
+                }}
+                styleImg={{
+                  width: '250%',
+                  height: '250%',
+                }}
+              />
+            </div>
+          )}
+        </>
       )}
       {/* List Items End */}
 
