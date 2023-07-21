@@ -10,7 +10,7 @@ import { getDate } from 'utils/date';
 import Loader from 'components/loader';
 import { fetchOrdersCompany } from '../slice/async';
 
-const socket = io('http://localhost:3000');
+const socket = io('https://essey-api.site')
 
 const OrdersList = () => {
   const dispatch = useDispatch();
