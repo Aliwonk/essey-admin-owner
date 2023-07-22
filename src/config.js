@@ -67,6 +67,11 @@ export const DEFAUTL_BACKEND_API = {
     GET_INF_CUSTOMER: `${DEFAUTL_BACKEND_URL}/shop/client/profile`,
     GET_ORDERS_CUSTOMER: `${DEFAUTL_BACKEND_URL}/orders/user`,
   },
+  BONUS_PLAN: {
+    CREATE: `${DEFAUTL_BACKEND_URL}/shop/plans-cashback/create`,
+    GET_LIST: `${DEFAUTL_BACKEND_URL}/shop/plans-cashback/all`,
+    ACCRUE_ONE: `${DEFAUTL_BACKEND_URL}/shop/cashback/accrue/one`,
+  },
 };
 
 export const MAPBOX = {

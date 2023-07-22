@@ -518,7 +518,7 @@ const OrdersDetail = () => {
                 </Row> */}
                   <Row className="g-0 mb-2">
                     <Col xs="auto" className="ms-auto ps-3 text-muted">
-                      Потрачено кэшбэк
+                      Оплачен кэшбэком
                     </Col>
                     <Col xs="auto" className="sw-13 text-end">
                       <span>{order.cashback}</span>

@@ -38,9 +38,7 @@ const Upgrade = () => {
                   <div className="display-4">6000 руб</div>
                   <div className="text-small text-muted mb-1">В месяц</div>
                 </div>
-                <p className="text-alternate mb-4">
-                  Стандартный доступ для вашего бизнеса с функционалом: удобные инструменты для работы с заказами, а также функционал оповещения клиентов.
-                </p>
+                <p className="text-alternate mb-4">Стандартный доступ для вашего бизнеса</p>
               </Card.Body>
               <Card.Footer className="pt-0 border-0">
                 {/* <div className="mb-4">

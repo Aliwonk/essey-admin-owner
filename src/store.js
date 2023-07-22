@@ -20,6 +20,7 @@ import companyReducer from 'views/company/slice';
 import ordersReducer from 'views/orders/slice';
 import clientsReducer from 'views/customers/slice';
 import productsReducer from 'views/products/slice';
+import plansReducer from 'views/bonus-plans/slice';
 
 const persistConfig = {
   key: REDUX_PERSIST_KEY,
@@ -41,6 +42,7 @@ const persistedReducer = persistReducer(
     orders: ordersReducer,
     clients: clientsReducer,
     products: productsReducer,
+    plans: plansReducer,
   })
 );
 const store = configureStore({

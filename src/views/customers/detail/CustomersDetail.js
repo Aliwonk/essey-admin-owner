@@ -7,6 +7,7 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { useParams } from 'react-router-dom/cjs/react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDate } from 'utils/date';
+import Loader from 'components/loader';
 import { fetchInfClient, fetchOrdersClient } from '../slice/async';
 
 const CustomersDetail = () => {
@@ -14,6 +15,7 @@ const CustomersDetail = () => {
   const { user, currentUser } = useSelector((state) => state.auth);
   const { client, isLoading, clientOrders } = useSelector((state) => state.clients);
   const [orders, setOrders] = useState([]);
+  const [cashback, setCashback] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
   const title = 'Клиент';
   const description = 'Страница клиента';
@@ -31,6 +33,16 @@ const CustomersDetail = () => {
       dispatch(fetchOrdersClient(id));
     }
   }, [dispatch, id, user]);
+
+  useEffect(() => {
+    if (Object.keys(currentUser).length > 0 && Object.keys(client).length > 0) {
+      setCashback(client.cashbacks.filter((cashbackUser) => cashbackUser.planCashback.shop.id === currentUser.list_shop[0].id)[0]);
+    }
+  }, [client, currentUser]);
+
+  useEffect(() => {
+    console.log(cashback);
+  }, [cashback]);
 
   useEffect(() => {
     if (Object.keys(currentUser).length > 0) {
@@ -104,24 +116,25 @@ const CustomersDetail = () => {
         <Col xl="4">
           <h2 className="small-title">Иноформация</h2>
           <Card className="mb-5">
-            <Card.Body className="mb-n5">
-              <div className="d-flex align-items-center flex-column mb-5">
-                <div className="mb-5 d-flex align-items-center flex-column">
-                  <div className="sw-6 sh-6 mb-3 d-inline-block bg-primary d-flex justify-content-center align-items-center rounded-xl">
-                    <div className="text-white">
-                      {Object.keys(client).length > 0 && client.lastName[0]}
-                      {Object.keys(client).length > 0 && client.firstName[0]}
+            {!isLoading ? (
+              <Card.Body className="mb-n5">
+                <div className="d-flex align-items-center flex-column mb-5">
+                  <div className="mb-5 d-flex align-items-center flex-column">
+                    <div className="sw-6 sh-6 mb-3 d-inline-block bg-primary d-flex justify-content-center align-items-center rounded-xl">
+                      <div className="text-white">
+                        {Object.keys(client).length > 0 && client.lastName[0]}
+                        {Object.keys(client).length > 0 && client.firstName[0]}
+                      </div>
+                    </div>
+                    <div className="h5 mb-1">
+                      {client.lastName} {client.firstName}
+                    </div>
+                    <div className="text-muted">
+                      <CsLineIcons icon="pin" className="me-1" />
+                      <span className="align-middle">{client.city}</span>
                     </div>
                   </div>
-                  <div className="h5 mb-1">
-                    {client.lastName} {client.firstName}
-                  </div>
-                  <div className="text-muted">
-                    <CsLineIcons icon="pin" className="me-1" />
-                    <span className="align-middle">{client.city}</span>
-                  </div>
-                </div>
-                {/* <div className="d-flex flex-row justify-content-between w-100 w-sm-50 w-xl-100">
+                  {/* <div className="d-flex flex-row justify-content-between w-100 w-sm-50 w-xl-100">
                   <Button variant="primary" className="w-100 me-2">
                     Edit
                   </Button>
@@ -132,9 +145,9 @@ const CustomersDetail = () => {
                     <CsLineIcons icon="more-horizontal" />
                   </Button>
                 </div> */}
-              </div>
-              <div className="mb-5">
-                {/* <Row className="g-0 align-items-center mb-2">
+                </div>
+                <div className="mb-5">
+                  {/* <Row className="g-0 align-items-center mb-2">
                   <Col xs="auto">
                     <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
                       <CsLineIcons icon="credit-card" className="text-primary" />
@@ -151,42 +164,61 @@ const CustomersDetail = () => {
                     </Row>
                   </Col>
                 </Row> */}
-                <Row className="g-0 align-items-center mb-2">
-                  <Col xs="auto">
-                    <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
-                      <CsLineIcons icon="cart" className="text-primary" />
-                    </div>
-                  </Col>
-                  <Col className="ps-3">
-                    <Row className="g-0">
-                      <Col>
-                        <div className="sh-5 d-flex align-items-center lh-1-25">ТРАТЫ</div>
-                      </Col>
+                  <Row className="g-0 align-items-center mb-2">
+                    <Col xs="auto">
+                      <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
+                        <CsLineIcons icon="cart" className="text-primary" />
+                      </div>
+                    </Col>
+                    <Col className="ps-3">
+                      <Row className="g-0">
+                        <Col>
+                          <div className="sh-5 d-flex align-items-center lh-1-25">ТРАТЫ</div>
+                        </Col>
+                        <Col xs="auto">
+                          <div className="sh-5 d-flex align-items-center">{totalAmount} руб</div>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                  <Row className="g-0 align-items-center mb-2">
+                    <Col xs="auto">
+                      <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
+                        <CsLineIcons icon="boxes" className="text-primary" />
+                      </div>
+                    </Col>
+                    <Col className="ps-3">
+                      <Row className="g-0">
+                        <Col>
+                          <div className="sh-5 d-flex align-items-center lh-1-25">КОЛИЧЕСТВО ЗАКАЗОВ</div>
+                        </Col>
+                        <Col xs="auto">
+                          <div className="sh-5 d-flex align-items-center"> {orders.length}</div>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                  {cashback && (
+                    <Row className="g-0 align-items-center mb-2">
                       <Col xs="auto">
-                        <div className="sh-5 d-flex align-items-center">{totalAmount} руб</div>
+                        <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
+                          <CsLineIcons icon="cart" className="text-primary" />
+                        </div>
+                      </Col>
+                      <Col className="ps-3">
+                        <Row className="g-0">
+                          <Col>
+                            <div className="sh-5 d-flex align-items-center lh-1-25">БАЛЛЫ КЕШБЕК</div>
+                          </Col>
+                          <Col xs="auto">
+                            <div className="sh-5 d-flex align-items-center">{cashback.amount}</div>
+                          </Col>
+                        </Row>
                       </Col>
                     </Row>
-                  </Col>
-                </Row>
-                <Row className="g-0 align-items-center mb-2">
-                  <Col xs="auto">
-                    <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
-                      <CsLineIcons icon="boxes" className="text-primary" />
-                    </div>
-                  </Col>
-                  <Col className="ps-3">
-                    <Row className="g-0">
-                      <Col>
-                        <div className="sh-5 d-flex align-items-center lh-1-25">КОЛИЧЕСТВО ЗАКАЗОВ</div>
-                      </Col>
-                      <Col xs="auto">
-                        <div className="sh-5 d-flex align-items-center"> {orders.length}</div>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </div>
-              {/* <div className="mb-5">
+                  )}
+                </div>
+                {/* <div className="mb-5">
                 <p className="text-small text-muted mb-2">SHIPPING ADDRESS</p>
                 <Row className="g-0 mb-2">
                   <Col xs="auto">
@@ -221,7 +253,7 @@ const CustomersDetail = () => {
                   <Col className="text-alternate">blaine@cottrell.com</Col>
                 </Row>
               </div> */}
-              {/* <div className="mb-5">
+                {/* <div className="mb-5">
                 <p className="text-small text-muted mb-2">BILLING ADDRESS</p>
                 <Row className="g-0 mb-2">
                   <Col xs="auto">
@@ -256,8 +288,72 @@ const CustomersDetail = () => {
                   <Col className="text-alternate">blaine@cottrell.com</Col>
                 </Row>
               </div> */}
-            </Card.Body>
+              </Card.Body>
+            ) : (
+              <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                <Loader
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '25px',
+                    height: '35px',
+                  }}
+                  styleImg={{
+                    width: '250%',
+                    height: '250%',
+                  }}
+                />
+              </div>
+            )}
           </Card>
+          {cashback && (
+            <>
+              <h2 className="small-title">Статус кешбека</h2>
+              <Card className="mb-5">
+                <Card.Body className="mb-n5">
+                  <div className="mb-5">
+                    <Row className="g-0 align-items-center mb-2">
+                      <Col className="ps-3">
+                        <Row className="g-0">
+                          <Col>
+                            <div className="sh-5 d-flex align-items-center lh-1-25">НАЗВАНИЕ</div>
+                          </Col>
+                          <Col xs="auto">
+                            <div className="sh-5 d-flex align-items-center">{cashback.planCashback.name}</div>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                    <Row className="g-0 align-items-center mb-2">
+                      <Col className="ps-3">
+                        <Row className="g-0">
+                          <Col>
+                            <div className="sh-5 d-flex align-items-center lh-1-25">СПИСАНИЕ</div>
+                          </Col>
+                          <Col xs="auto">
+                            <div className="sh-5 d-flex align-items-center">{cashback.planCashback.writeoff}%</div>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                    <Row className="g-0 align-items-center mb-2">
+                      <Col className="ps-3">
+                        <Row className="g-0">
+                          <Col>
+                            <div className="sh-5 d-flex align-items-center lh-1-25">КЕШБЕК</div>
+                          </Col>
+                          <Col xs="auto">
+                            <div className="sh-5 d-flex align-items-center">{cashback.planCashback.cashback}%</div>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </div>
+                </Card.Body>
+              </Card>
+            </>
+          )}
         </Col>
 
         <Col xl="8">
@@ -268,66 +364,84 @@ const CustomersDetail = () => {
               <span className="align-bottom">View All</span> <CsLineIcons icon="chevron-right" className="align-middle" size="12" />
             </Button> */}
           </div>
-          <div className="mb-5">
-            {orders.length > 0 &&
-              orders.map((order, index) => {
-                return order.shopOrders.map((shopOrder, indexShop) => {
-                  let bageCol = 'warning';
+          {!isLoading ? (
+            <div className="mb-5">
+              {orders.length > 0 &&
+                orders.map((order, index) => {
+                  return order.shopOrders.map((shopOrder, indexShop) => {
+                    let bageCol = 'warning';
 
-                  switch (shopOrder.status) {
-                    case 'Принят':
-                      bageCol = 'secondary';
-                      break;
-                    case 'Отправлен':
-                      bageCol = 'info';
-                      break;
-                    case 'Доставлен':
-                      bageCol = 'success';
-                      break;
-                    case 'Отменен':
-                      bageCol = 'danger';
-                      break;
-                    default:
-                      break;
-                  }
-                  return (
-                    <>
-                      <Card className="mb-2" key={index}>
-                        <Card.Body className="sh-16 sh-md-8 py-0">
-                          <Row className="g-0 h-100 align-content-center">
-                            <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
-                              <div className="text-muted text-small d-md-none">Id</div>
-                              <NavLink to={`/order/${shopOrder.id}`} className="text-truncate h-100 d-flex align-items-center">
-                                {index + 1}
-                              </NavLink>
-                            </Col>
-                            <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                              <div className="text-muted text-small d-md-none">ТРАТА</div>
-                              <div className="text-alternate">
-                                <span>
-                                  {/* <span className="text-small">$</span> */}
-                                  {shopOrder.amount} руб
-                                </span>
-                              </div>
-                            </Col>
-                            <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
-                              <div className="text-muted text-small d-md-none">Дата</div>
-                              <div className="text-alternate">
-                                {getDate(shopOrder.createdDate).date} {getDate(shopOrder.createdDate).time}
-                              </div>
-                            </Col>
-                            <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
-                              <div className="text-muted text-small d-md-none">Статус</div>
-                              <Badge bg={bageCol}>{shopOrder.status}</Badge>
-                            </Col>
-                          </Row>
-                        </Card.Body>
-                      </Card>
-                    </>
-                  );
-                });
-              })}
-          </div>
+                    switch (shopOrder.status) {
+                      case 'Принят':
+                        bageCol = 'secondary';
+                        break;
+                      case 'Отправлен':
+                        bageCol = 'info';
+                        break;
+                      case 'Доставлен':
+                        bageCol = 'success';
+                        break;
+                      case 'Отменен':
+                        bageCol = 'danger';
+                        break;
+                      default:
+                        break;
+                    }
+                    return (
+                      <>
+                        <Card className="mb-2" key={index}>
+                          <Card.Body className="sh-16 sh-md-8 py-0">
+                            <Row className="g-0 h-100 align-content-center">
+                              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 h-md-100">
+                                <div className="text-muted text-small d-md-none">Id</div>
+                                <NavLink to={`/order/${shopOrder.id}`} className="text-truncate h-100 d-flex align-items-center">
+                                  {index + 1}
+                                </NavLink>
+                              </Col>
+                              <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
+                                <div className="text-muted text-small d-md-none">ТРАТА</div>
+                                <div className="text-alternate">
+                                  <span>
+                                    {/* <span className="text-small">$</span> */}
+                                    {shopOrder.amount} руб
+                                  </span>
+                                </div>
+                              </Col>
+                              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0">
+                                <div className="text-muted text-small d-md-none">Дата</div>
+                                <div className="text-alternate">
+                                  {getDate(shopOrder.createdDate).date} {getDate(shopOrder.createdDate).time}
+                                </div>
+                              </Col>
+                              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 align-items-md-end">
+                                <div className="text-muted text-small d-md-none">Статус</div>
+                                <Badge bg={bageCol}>{shopOrder.status}</Badge>
+                              </Col>
+                            </Row>
+                          </Card.Body>
+                        </Card>
+                      </>
+                    );
+                  });
+                })}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
+              <Loader
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '25px',
+                  height: '35px',
+                }}
+                styleImg={{
+                  width: '250%',
+                  height: '250%',
+                }}
+              />
+            </div>
+          )}
           {/* Recent Orders End */}
 
           {/* History Start */}
