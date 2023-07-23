@@ -77,6 +77,9 @@ const RegisterCompany = () => {
   }, []);
 
   useEffect(() => {
+    if (user.token === 'undefined') {
+      window.location.href = '/login';
+    }
     if (!isLoading.createCompany && isCreateCompany) {
       window.location.href = '/';
     } else {

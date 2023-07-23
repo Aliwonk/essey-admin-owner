@@ -15,7 +15,7 @@ import { saveUser } from 'auth/authSlice';
 
 const Login = () => {
   const dispatch = useDispatch();
-  const { currentUser, isLoading, isLogin, user } = useSelector((state) => state.auth);
+  const { currentUser, isLoading, isLogin, user, isError } = useSelector((state) => state.auth);
   const title = 'Login';
   const description = 'Login Page';
 
@@ -34,6 +34,8 @@ const Login = () => {
     if (isLogin) {
       dispatch(saveUser(currentUser));
       document.location.href = '/';
+    } else if(!isLogin && isError.login) {
+      alert(isError.login);
     }
   }, [currentUser, dispatch, isLoading, isLogin]);
 

@@ -14,6 +14,7 @@ const initialState = {
     createCompany: false,
   },
   isError: {
+    login: null,
     register: null,
     confirmEmail: null,
     createNewPassword: null,
@@ -75,8 +76,13 @@ const authSlice = createSlice({
       })
       .addCase(fetchLoginOwner.fulfilled, (state, action) => {
         state.isLoading.login = false;
-        state.currentUser = action.payload;
-        state.isLogin = true;
+        if (action.payload.id) {
+          state.currentUser = action.payload;
+          state.isLogin = true;
+        } else if (action.payload.statusCode === 404 || action.payload.statusCode === 409) {
+          state.isError.login = 'Не правильный логин или пароль!';
+          state.isLogin = false;
+        }
       })
       .addCase(fetchLoginOwner.rejected, (state) => {
         state.isLoading.login = false;
