@@ -45,8 +45,9 @@ const CustomersDetail = () => {
   }, [cashback]);
 
   useEffect(() => {
-    if (Object.keys(currentUser).length > 0) {
-      const ordersShop = clientOrders.filter((order) => order.shopOrders[0].shop.id === currentUser.list_shop[0].id);
+    console.log(clientOrders);
+    if (Object.keys(currentUser).length > 0 && clientOrders.length > 0) {
+      const ordersShop = clientOrders.filter((order) => order.shopOrders[0].shop && order.shopOrders[0].shop.id === currentUser.list_shop[0].id);
       const totalAmountOrders = ordersShop.reduce((curr, prev) => {
         const total = prev.amount + curr;
         if (prev.shopOrders[0].status === 'Доставлен') {

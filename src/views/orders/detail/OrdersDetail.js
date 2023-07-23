@@ -26,7 +26,6 @@ const OrdersDetail = () => {
         token: user.token,
       })
     );
-    console.log(1);
   }, [dispatch, id, user, isUpdate]);
 
   useEffect(() => {
