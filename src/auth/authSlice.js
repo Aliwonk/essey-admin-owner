@@ -80,7 +80,7 @@ const authSlice = createSlice({
           state.currentUser = action.payload;
           state.isLogin = true;
         } else if (action.payload.statusCode === 404 || action.payload.statusCode === 409) {
-          state.isError.login = 'Не правильный логин или пароль!';
+          state.isError.login = 'Неправильный логин или пароль!';
           state.isLogin = false;
         }
       })
