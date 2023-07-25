@@ -16,6 +16,8 @@ const company = lazy(() => import('views/company/Company'));
 const subscription = lazy(() => import('views/subscription/Upgrade'));
 const productAdd = lazy(() => import('views/products/add/ProductAdd'));
 const bonusPlans = lazy(() => import('views/bonus-plans/BonusPlans'));
+const newsList = lazy(() => import('views/news/list'));
+const newsAdd = lazy(() => import('views/news/add/index'))
 
 // const storefront = {
 //   home: lazy(() => import('views/storefront/home/Home')),
@@ -157,6 +159,17 @@ const routesAndMenuItems = {
     //   label: 'menu.shipping',
     //   icon: 'shipping',
     // },
+    {
+      path: `${appRoot}/news`,
+      component: newsList,
+      label: 'menu.news',
+      icon: 'news',
+    },
+    {
+      path: `${appRoot}/news-add`,
+      // icon: 'cupcake',
+      component: newsAdd,
+    },
     {
       path: `${appRoot}/bonus-plan`,
       component: bonusPlans,

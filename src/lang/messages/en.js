@@ -139,8 +139,9 @@ const enMessages = {
   'menu.invoice': 'Счет-фактура',
   'menu.shipping': 'Доставка',
   'menu.discount': 'Скидка',
-  'menu.bonus-plan': 'Программа лояльности',
+  'menu.bonus-plan': 'Бонусы',
   'menu.general': 'Общие',
+  'menu.news': 'Новости',
 
   'menu.upgrade': 'Обновлять',
   'menu.community': 'Сообщество',

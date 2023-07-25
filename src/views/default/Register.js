@@ -36,6 +36,12 @@ const Register = () => {
     }
   };
 
+  useEffect(() => {
+    if (isError.register) {
+      alert(isError.register.message);
+    }
+  }, [isError]);
+
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 

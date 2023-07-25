@@ -108,6 +108,10 @@ const authSlice = createSlice({
             state.isError.register = {
               message: 'Аккаунт с таким email существует',
             };
+          } else if (action.payload.message === 'Uncorrect phone number') {
+            state.isError.register = {
+              message: 'Неправильный номер телефона, должен начинатся с +7',
+            };
           }
           state.isConfirmEmail = false;
           state.isLoading.register = false;

@@ -68,6 +68,7 @@ const ProductAdd = () => {
             price: 0,
             description: '',
           });
+          document.location.href = '/products';
         }
       });
     }

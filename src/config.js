@@ -5,6 +5,8 @@ export const IS_AUTH_GUARD_ACTIVE = true;
 export const SERVICE_URL = '/app';
 export const USE_MULTI_LANGUAGE = true;
 export const DEFAUTL_BACKEND_URL = 'https://essey-api.site';
+export const DEFAUTL_WS_URL = 'https://essey-api.site';
+// https://essey-api.site
 // 'https://essey-api.site'
 // For detailed information: https://github.com/nfl/react-helmet#reference-guide
 export const REACT_HELMET_PROPS = {
@@ -71,6 +73,11 @@ export const DEFAUTL_BACKEND_API = {
     CREATE: `${DEFAUTL_BACKEND_URL}/shop/plans-cashback/create`,
     GET_LIST: `${DEFAUTL_BACKEND_URL}/shop/plans-cashback/all`,
     ACCRUE_ONE: `${DEFAUTL_BACKEND_URL}/shop/cashback/accrue/one`,
+  },
+  NEWS: {
+    CREATE: `${DEFAUTL_BACKEND_URL}/shop/news/create`,
+    GET_ONE: `${DEFAUTL_BACKEND_URL}/shop/news/one`,
+    GET_LIST: `${DEFAUTL_BACKEND_URL}/shop/news`,
   },
 };
 

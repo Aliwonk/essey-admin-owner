@@ -8,9 +8,10 @@ import CheckAll from 'components/check-all/CheckAll';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDate } from 'utils/date';
 import Loader from 'components/loader';
+import { DEFAUTL_WS_URL } from 'config';
 import { fetchOrdersCompany } from '../slice/async';
 
-const socket = io('https://essey-api.site')
+const socket = io(DEFAUTL_WS_URL);
 
 const OrdersList = () => {
   const dispatch = useDispatch();

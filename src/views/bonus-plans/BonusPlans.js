@@ -2,9 +2,10 @@
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { React, useEffect, useState } from 'react';
-import { Button, Card, Col, Form, NavLink, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from 'components/loader';
+import { NavLink } from 'react-router-dom/cjs/react-router-dom';
 import { fetchAccrueCashack, fetchCreatePlan, fetchGetListPlans } from './slice/async';
 
 const BonusPlans = () => {
@@ -22,8 +23,8 @@ const BonusPlans = () => {
     amount: null,
     message: '',
   });
-  const title = 'Программа лояльности';
-  const description = 'Страница программа лояльности';
+  const title = 'Бонусы компании';
+  const description = 'Страница бонусов компании';
 
   useEffect(() => {
     if (Object.keys(currentUser).length > 0) {
@@ -109,7 +110,7 @@ const BonusPlans = () => {
 
       <Row>
         <Col xl="4">
-          <h2 className="small-title">Ваши программы</h2>
+          <h2 className="small-title">Бонусы</h2>
           {plans.length !== 0 ? (
             plans.map((plan, index) => {
               return (
@@ -226,7 +227,7 @@ const BonusPlans = () => {
             </Button>
           </Col>
           <Col>
-            <h2 className="small-title">Добавить программу</h2>
+            <h2 className="small-title">Добавить бонусную программу</h2>
             <Card>
               <Card.Body>
                 <div className="mb-3">
