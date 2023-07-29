@@ -4,8 +4,8 @@ export const IS_DEMO = false;
 export const IS_AUTH_GUARD_ACTIVE = true;
 export const SERVICE_URL = '/app';
 export const USE_MULTI_LANGUAGE = true;
-export const DEFAUTL_BACKEND_URL = 'https://essey-api.site';
-export const DEFAUTL_WS_URL = 'https://essey-api.site';
+export const DEFAUTL_BACKEND_URL = 'https://essey-dev.site';
+export const DEFAUTL_WS_URL = 'https://essey-dev.site';
 // https://essey-api.site
 // 'https://essey-api.site'
 // For detailed information: https://github.com/nfl/react-helmet#reference-guide
