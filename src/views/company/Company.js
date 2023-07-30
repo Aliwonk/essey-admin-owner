@@ -21,6 +21,7 @@ const Company = () => {
   const [hideBlock, setHideBlock] = useState({
     general: false,
     address: true,
+    timework: true,
   });
   const [infCompany, setInfCompany] = useState({
     name: '',
@@ -33,13 +34,38 @@ const Company = () => {
       value: '',
     },
   });
+  const [worktimes, setWorkTimes] = useState([
+    { day: 0, start: '10:00', end: '00:00' },
+    { day: 1, start: '10:00', end: '00:00' },
+    { day: 2, start: '10:00', end: '00:00' },
+    { day: 3, start: '10:00', end: '00:00' },
+    { day: 4, start: '10:00', end: '00:00' },
+    { day: 5, start: '10:00', end: '00:00' },
+    { day: 6, start: '10:00', end: '00:00' },
+  ]);
   const [imageURL, setImageURL] = useState('');
   const [activeCompany, setActiveCompany] = useState(true);
   const [activePlansCompany, setActivePlansCompany] = useState(true);
 
   function handleChange(event) {
     const { target } = event;
-    setInfCompany({ ...infCompany, [target.name]: target.type === 'checkbox' ? !target.checked : target.value });
+    if (target.type === 'time') {
+      const name = target.name.split(':')[0];
+      const indexDay = target.name.split(':')[1];
+
+      console.log(indexDay);
+      const changeWorktimes = worktimes.map((value) => {
+        // eslint-disable-next-line radix
+        if (value.day === parseInt(indexDay)) {
+          return { ...value, [name]: target.value };
+        }
+        return value;
+      });
+      console.log(changeWorktimes);
+      setWorkTimes(changeWorktimes);
+    } else {
+      setInfCompany({ ...infCompany, [target.name]: target.type === 'checkbox' ? !target.checked : target.value });
+    }
   }
 
   mapboxgl.accessToken = MAPBOX.TOKEN;
@@ -51,6 +77,7 @@ const Company = () => {
   }, [currentUser, dispatch]);
 
   useEffect(() => {
+    console.log(company);
     setInfCompany({
       name: company.name,
       annotation: company.annotation,
@@ -67,6 +94,10 @@ const Company = () => {
     setActiveCompany(company.active);
     setActivePlansCompany(company.plans_active);
     setImageURL(`${DEFAUTL_BACKEND_URL}/${company.logotype}`);
+
+    if (Object.keys(company).length > 0 && company.worktimes.length > 0) {
+      setWorkTimes(company.worktimes);
+    }
   }, [company]);
 
   useEffect(() => {
@@ -84,12 +115,21 @@ const Company = () => {
       case 'address':
         setHideBlock({
           general: true,
+          timework: true,
         });
 
         break;
       case 'general':
         setHideBlock({
           address: true,
+          timework: true,
+        });
+        break;
+
+      case 'timework':
+        setHideBlock({
+          address: true,
+          general: true,
         });
         break;
       default:
@@ -110,6 +150,7 @@ const Company = () => {
         data.append(key, infCompany[key]);
       });
       data.append('logotype', image.files[0]);
+      data.append('worktimes', JSON.stringify(worktimes));
 
       dispatch(
         fetchCompanyUpdate({
@@ -334,6 +375,16 @@ const Company = () => {
                     </Card.Body>
                   </Card>
                 </Col>
+                <Col sm="4" lg="3" className="mb-2">
+                  <Card className="hover-border-primary" bg={!hideBlock.timework && 'primary'} onClick={() => clickNavBtn('timework')}>
+                    <Card.Body style={{ padding: '1rem 1rem' }}>
+                      <div className="heading mb-0 d-flex justify-content-between lh-1-25">
+                        <span className={!hideBlock.timework ? 'text-light' : 'text-primary'}>Рабочее время</span>
+                        <CsLineIcons icon="clock" className={!hideBlock.timework ? 'text-light' : 'text-primary'} />
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
               </Row>
 
               {/* START CARD GENERAL DATA */}
@@ -399,6 +450,67 @@ const Company = () => {
             </Card.Body>
           </Card>
           {/* END CARD ADDRESS */}
+
+          {/* START WORK TIME */}
+
+          <Card className="w-50 p-3 mb-4" hidden={hideBlock.timework}>
+            {worktimes.length > 0 &&
+              worktimes.map((value) => {
+                let day = '';
+
+                switch (value.day) {
+                  case 0:
+                    day = 'Понедельник';
+                    break;
+                  case 1:
+                    day = 'Вторник';
+                    break;
+                  case 2:
+                    day = 'Среда';
+                    break;
+                  case 3:
+                    day = 'Четверг';
+                    break;
+                  case 4:
+                    day = 'Пятница';
+                    break;
+                  case 5:
+                    day = 'Суббота';
+                    break;
+                  case 6:
+                    day = 'Воскресенье';
+                    break;
+                  default:
+                    break;
+                }
+                return (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'center',
+                      }}
+                      className="mb-0 w-100"
+                    >
+                      <p className="w-40 mb-0 text-primary">{day}</p>
+                      <Row className="w-60">
+                        <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                          <p className="mb-1 text-muted">от</p>
+                          <Form.Control name={`start:${value.day}`} type="time" value={value.start} onChange={(e) => handleChange(e)} />
+                        </Col>
+                        <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                          <p className="mb-1 text-muted">до</p>
+                          <Form.Control name={`end:${value.day}`} type="time" value={value.end} onChange={(e) => handleChange(e)} />
+                        </Col>
+                      </Row>
+                    </div>
+                  </>
+                );
+              })}
+          </Card>
+          {/* END WORK TIME */}
 
           <Button onClick={() => submit()}>
             {!isLoading.update ? (

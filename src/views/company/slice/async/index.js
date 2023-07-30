@@ -8,7 +8,6 @@ export const fetchCompanyInf = createAsyncThunk('company/fetchCompanyInf', async
 });
 
 export const fetchCompanyUpdate = createAsyncThunk('company/fetchCompanyUpdate', async ({ shopId, token, data }) => {
-  console.log(token);
   const respose = await fetch(`${DEFAUTL_BACKEND_API.COMPANY.UPDATE}/${shopId}`, {
     method: 'POST',
     headers: {

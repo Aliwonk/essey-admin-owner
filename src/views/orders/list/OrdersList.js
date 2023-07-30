@@ -290,7 +290,13 @@ const OrdersList = () => {
               // console.log(order.client);
               return (
                 <>
-                  <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`}>
+                  <Card
+                    // ${selectedItems.includes(1) && 'selected'}`
+                    className={`mb-2 `}
+                    onClick={() => {
+                      document.location.href = `/order/${order.id}`;
+                    }}
+                  >
                     <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
                       <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(1)}>
                         <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
@@ -326,9 +332,9 @@ const OrdersList = () => {
                             <Badge bg={bageCol}>{order.status}</Badge>
                           </div>
                         </Col>
-                        <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+                        {/* <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
                           <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(1)} onChange={() => {}} />
-                        </Col>
+                        </Col> */}
                       </Row>
                     </Card.Body>
                   </Card>

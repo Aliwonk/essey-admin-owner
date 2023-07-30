@@ -6,7 +6,7 @@ const initialState = {
   isError: null,
   isLoading: {
     update: false,
-    get: false,
+    get: true,
     update_active: false,
     update_active_plans: false,
   },
