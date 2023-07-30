@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { Alert, Button, Form } from 'react-bootstrap';
+import { Accordion, Alert, Button, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCompanyRegister } from 'auth/async';
 import Loader from 'components/loader';
 import { MAPBOX } from 'config';
+import Categories from 'views/storefront/categories/Categories';
 
 const RegisterCompany = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,48 @@ const RegisterCompany = () => {
   const description = 'Страница регистрации компании';
   const [address, setAddress] = useState('');
   const [coordinates, setCoordinates] = useState();
+  const [hidden, setHidden] = useState({
+    week: false,
+    allDay: true,
+  });
+  const [wortTimes, setWorkTimes] = useState([
+    {
+      day: 0,
+      start: '08:00',
+      end: '00:00',
+    },
+    {
+      day: 1,
+      start: '08:00',
+      end: '00:00',
+    },
+    {
+      day: 2,
+      start: '08:00',
+
+      end: '00:00',
+    },
+    {
+      day: 3,
+      start: '08:00',
+      end: '00:00',
+    },
+    {
+      day: 4,
+      start: '08:00',
+      end: '00:00',
+    },
+    {
+      day: 5,
+      start: '08:00',
+      end: '00:00',
+    },
+    {
+      day: 6,
+      start: '08:00',
+      end: '00:00',
+    },
+  ]);
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -86,15 +129,24 @@ const RegisterCompany = () => {
       // alert('При создании произошла ошибка');
     }
   }, [isLoading.createCompany, isCreateCompany]);
+  // function check(dayshidden, everyDayHidden, switchDays) {
+  //   if (switchDays = true) {
+  //     everyDayHidden.hidden = null
+  //   }
+  //   else {
+  //     dayshidden.hidden = true
+  //   }
+  // };
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Название не заполнен'),
     annotation: Yup.string().required('Аннотация не заполнен'),
     // address: Yup.string().required('Адрес не заполнен'),
     logotype: Yup.string().required('Логотип не выбран'),
-    phone: Yup.string().required('Номер телеофна не заполнен'),
+    phone: Yup.string().required('Номер телефона не заполнен'),
   });
-  const [category, setCategory] = useState('');
+  const [category, setCategory, DatesOfWork] = useState('');
+
   const initialValues = { name: '', annotation: '', phone: '', logotype: '' };
   // eslint-disable-next-line consistent-return
   const onSubmit = (values) => {
@@ -124,6 +176,7 @@ const RegisterCompany = () => {
           longitude: coordinates.longitude,
         })
       );
+      data.append('worktimes', JSON.stringify(wortTimes));
 
       dispatch(fetchCompanyRegister({ data, token: user.token }));
     } else {
@@ -135,6 +188,34 @@ const RegisterCompany = () => {
   const { handleSubmit, handleChange, values, touched, errors } = formik;
   const onChangeSelect = (event) => setCategory(event.target.value);
   const onChangeAddress = (event) => setAddress(event.target.value);
+
+  const onChangeWorktimes = (event) => {
+    const name = event.target.name.split(':')[0];
+    const index = event.target.name.split(':')[1];
+    const inputValue = event.target.value;
+
+    console.log(inputValue);
+    console.log(name);
+    // console.log(index);
+
+    const changeTimes = wortTimes.map((time) => {
+      // eslint-disable-next-line
+      if (time.day === parseInt(index)) {
+        return { ...time, [name]: inputValue };
+      }
+      // eslint-disable-next-line
+      if (index === 'all') {
+        return { ...time, [name]: inputValue };
+      }
+      return time;
+    });
+
+    setWorkTimes(changeTimes);
+  };
+
+  useEffect(() => {
+    console.log(wortTimes);
+  }, [wortTimes]);
 
   const rightSide = (
     <div className="min-h-100 d-flex align-items-center">
@@ -214,11 +295,131 @@ const RegisterCompany = () => {
                   />
                   {errors.logotype && touched.logotype && <div className="d-block invalid-tooltip">{errors.logotype}</div>}
                 </div>
-                <Form.Select style={{ marginBottom: 25 }} value={category} type="text" onChange={onChangeSelect}>
+                <Form.Select style={{ marginBottom: 15 }} value={category} type="text" onChange={onChangeSelect}>
                   <option>Выберите категорию</option>
                   <option value="Рестораны и кафе">Рестораны и кафе</option>
                   <option value="Магазины">Магазины</option>
                 </Form.Select>
+                <Accordion defaultActiveKey="0" style={{ marginBottom: 15, padding: '10,0' }}>
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header style={{ fontSize: '14px' }}>Выберите часы работы!</Accordion.Header>
+                    <Accordion.Body>
+                      <div hidden={hidden.week}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-evenly',
+                            marginLeft: '120px',
+                          }}
+                        >
+                          <div style={{ width: 72.9, display: 'flex', justifyContent: 'center' }}>От</div>
+                          <div style={{ width: 72.9, display: 'flex', justifyContent: 'center' }}>До</div>
+                        </div>
+                        {wortTimes.map((time, index) => {
+                          let day = '';
+
+                          switch (time.day) {
+                            case 0:
+                              day = 'Понедельник';
+                              break;
+                            case 1:
+                              day = 'Вторник';
+                              break;
+                            case 2:
+                              day = 'Среда';
+                              break;
+                            case 3:
+                              day = 'Четверг';
+                              break;
+                            case 4:
+                              day = 'Пятница';
+                              break;
+                            case 5:
+                              day = 'Суббота';
+                              break;
+                            case 6:
+                              day = 'Воскресенье';
+                              break;
+                            default:
+                              break;
+                          }
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-evenly',
+                                paddingBottom: '5px',
+                              }}
+                            >
+                              <div style={{ width: 110 }}>{day}</div>
+                              <input name={`start:${time.day}`} value={time.start} type="time" onChange={(e) => onChangeWorktimes(e)} />
+                              <input name={`end:${time.day}`} value={time.end} type="time" onChange={(e) => onChangeWorktimes(e)} />
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'flex-start',
+                          paddingBottom: '5px',
+                        }}
+                      >
+                        <div style={{ marginLeft: '10px', paddingRight: '30px' }}>Для всех дней</div>
+                        <Form.Check // prettier-ignore
+                          type="switch"
+                          id="custom-switch"
+                          className="switchDays"
+                          label=""
+                          onClick={(e) => {
+                            if (e.target.checked === true) {
+                              setHidden({
+                                week: true,
+                                allDay: false,
+                              });
+                            } else {
+                              setHidden({
+                                week: false,
+                                allDay: true,
+                              });
+                            }
+                          }}
+                        />
+                      </div>
+                      <div hidden={hidden.allDay} className="everyDayHidden">
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-evenly',
+                            marginLeft: '120px',
+                            paddingBottom: '5px',
+                          }}
+                        >
+                          <div style={{ width: 72.9, display: 'flex', justifyContent: 'center' }}>От</div>
+                          <div style={{ width: 72.9, display: 'flex', justifyContent: 'center' }}>До</div>
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-evenly',
+                            marginLeft: 120,
+                            paddingBottom: '5px',
+                          }}
+                        >
+                          <input name="start:all" type="time" onChange={(e) => onChangeWorktimes(e)} />
+                          <input name="End:all" type="time" onChange={(e) => onChangeWorktimes(e)} />
+                        </div>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
                 <Button size="lg" type="submit">
                   {isLoading.createCompany ? (
                     <Loader
