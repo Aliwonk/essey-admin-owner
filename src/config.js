@@ -4,8 +4,8 @@ export const IS_DEMO = false;
 export const IS_AUTH_GUARD_ACTIVE = true;
 export const SERVICE_URL = '/app';
 export const USE_MULTI_LANGUAGE = true;
-export const DEFAUTL_BACKEND_URL = 'https:/essey-api.site';
-export const DEFAUTL_WS_URL = 'https:/essey-api.site';
+export const DEFAUTL_BACKEND_URL = 'https://essey-api.site';
+export const DEFAUTL_WS_URL = 'https://essey-api.site';
 // https://essey-api.site
 // 'https://essey-api.site'
 // For detailed information: https://github.com/nfl/react-helmet#reference-guide
@@ -84,6 +84,17 @@ export const DEFAUTL_BACKEND_API = {
 export const MAPBOX = {
   TOKEN: 'pk.eyJ1IjoiYWxpd29uayIsImEiOiJjbGJuemp4MHUwdnluM29sOTB4NDRveDc4In0.ca9oT1Xiheo19LUqkHK8lA',
   STYLE: 'mapbox://styles/aliwonk/clbpdn452000014oilhmvewcu',
+};
+
+export const DADATA = {
+  URLS: {
+    GET_ADDRESS_BY_COORDS: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/geolocate/address',
+    GET_ADDRESS: 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address',
+  },
+  KEYS: {
+    TOKEN: '244877602a2b7d6e0033ac937aae68e227c1d8fb',
+    SECRET: '4ea41eb64056ff319d3c737c98957ef2480d6c70',
+  },
 };
 
 export const REDUX_PERSIST_KEY = 'ecommerce-platform';

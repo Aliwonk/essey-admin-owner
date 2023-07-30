@@ -1,6 +1,7 @@
+/* eslint-disable react/jsx-no-bind */
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { Accordion, Alert, Button, Form } from 'react-bootstrap';
+import { Accordion, Alert, Button, Card, Form, ListGroup } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
@@ -10,7 +11,7 @@ import { SVGLogo } from 'components/svg-components/SVGcomponents';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCompanyRegister } from 'auth/async';
 import Loader from 'components/loader';
-import { MAPBOX } from 'config';
+import { MAPBOX, DADATA } from 'config';
 import Categories from 'views/storefront/categories/Categories';
 
 const RegisterCompany = () => {
@@ -19,6 +20,7 @@ const RegisterCompany = () => {
   const title = 'Регистрация компании';
   const description = 'Страница регистрации компании';
   const [address, setAddress] = useState('');
+  const [variantsAddress, setVariantsAddress] = useState([]);
   const [coordinates, setCoordinates] = useState();
   const [hidden, setHidden] = useState({
     week: false,
@@ -62,6 +64,12 @@ const RegisterCompany = () => {
       end: '00:00',
     },
   ]);
+  const [valuesInput, setValuesInput] = useState({
+    name: '',
+    annotation: '',
+    phone: '',
+    logotype: '',
+  });
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -96,13 +104,13 @@ const RegisterCompany = () => {
       };
       // `https://api.mapbox.com/geocoding/v5/mapbox.places/Kyzyl.json?access_token=${MAPBOX.TOKEN}`
       // https://api.mapbox.com/geocoding/v5/mapbox.places/${coords.longitude},${coords.latitude}.json?access_token=${MAPBOX.TOKEN}
-      fetch(`https://suggestions.dadata.ru/suggestions/api/4_1/rs/geolocate/address`, {
+      fetch(DADATA.URLS.GET_ADDRESS_BY_COORDS, {
         method: 'POST',
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          Authorization: 'Token 244877602a2b7d6e0033ac937aae68e227c1d8fb',
+          Authorization: `Token ${DADATA.KEYS.TOKEN}`,
         },
         body: JSON.stringify({ lat: coords.latitude, lon: coords.longitude }),
       })
@@ -125,18 +133,8 @@ const RegisterCompany = () => {
     }
     if (!isLoading.createCompany && isCreateCompany) {
       window.location.href = '/';
-    } else {
-      // alert('При создании произошла ошибка');
     }
-  }, [isLoading.createCompany, isCreateCompany]);
-  // function check(dayshidden, everyDayHidden, switchDays) {
-  //   if (switchDays = true) {
-  //     everyDayHidden.hidden = null
-  //   }
-  //   else {
-  //     dayshidden.hidden = true
-  //   }
-  // };
+  }, [isLoading.createCompany, isCreateCompany, user.token]);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Название не заполнен'),
@@ -149,22 +147,22 @@ const RegisterCompany = () => {
 
   const initialValues = { name: '', annotation: '', phone: '', logotype: '' };
   // eslint-disable-next-line consistent-return
-  const onSubmit = (values) => {
+  const onSubmit = () => {
     if (!isLoading.createCompany) {
       const logotype = document.getElementsByName('logotype');
       const fileLogotype = logotype[0].files[0];
       const data = new FormData();
 
-      delete values.logotype;
+      delete valuesInput.logotype;
       if (address === 'К сожалению произошла ошибка') {
         return alert('Невозможно создать. Попробуйте позже');
       }
       if (address === '') {
         return alert('Заполните адрес');
       }
-
-      Object.keys(values).forEach((key) => {
-        data.append(key, values[key]);
+      console.log(valuesInput);
+      Object.keys(valuesInput).forEach((key) => {
+        data.append(key, valuesInput[key]);
       });
       data.append('logotype', fileLogotype);
       data.append('category', category);
@@ -184,19 +182,47 @@ const RegisterCompany = () => {
     }
   };
 
+  function changeHandle(event) {
+    setValuesInput({
+      ...valuesInput,
+      [event.target.name]: event.target.value,
+    });
+  }
+
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
   const onChangeSelect = (event) => setCategory(event.target.value);
-  const onChangeAddress = (event) => setAddress(event.target.value);
+  const onChangeAddress = (event) => {
+    const options = {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Token ${DADATA.KEYS.TOKEN}`,
+        // 'X-Secret': DADATA.KEYS.SECRET,
+      },
+      body: JSON.stringify({ query: event.target.value }),
+    };
+
+    fetch(DADATA.URLS.GET_ADDRESS, options)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.suggestions.length > 5) {
+          result.suggestions.length = 5;
+          setVariantsAddress(result.suggestions);
+        } else {
+          setVariantsAddress(result.suggestions);
+        }
+      })
+      .catch((error) => console.log('error', error));
+    setAddress(event.target.value);
+  };
 
   const onChangeWorktimes = (event) => {
     const name = event.target.name.split(':')[0];
     const index = event.target.name.split(':')[1];
     const inputValue = event.target.value;
-
-    console.log(inputValue);
-    console.log(name);
-    // console.log(index);
 
     const changeTimes = wortTimes.map((time) => {
       // eslint-disable-next-line
@@ -213,10 +239,6 @@ const RegisterCompany = () => {
     setWorkTimes(changeTimes);
   };
 
-  useEffect(() => {
-    console.log(wortTimes);
-  }, [wortTimes]);
-
   const rightSide = (
     <div className="min-h-100 d-flex align-items-center">
       <div className="w-100 w-lg-50 w-xxl-50">
@@ -230,6 +252,32 @@ const RegisterCompany = () => {
             value={address}
             onChange={onChangeAddress}
           />
+          <ListGroup style={{ position: 'absolute', padding: 5 }}>
+            {variantsAddress.length > 0 &&
+              variantsAddress.map((variant, index) => {
+                // console.log(variant);
+                return (
+                  <ListGroup.Item
+                    key={index}
+                    className="cursor-pointer"
+                    action
+                    onClick={() => {
+                      const coords = {
+                        latitude: parseFloat(variant.data.geo_lat),
+                        longitude: parseFloat(variant.data.geo_lon),
+                      };
+                      setAddress(variant.unrestricted_value);
+                      setCoordinates(coords);
+                      map.current.setCenter([coords.longitude, coords.latitude]);
+                      map.current.setZoom(18);
+                      setVariantsAddress([]);
+                    }}
+                  >
+                    {variant.unrestricted_value}
+                  </ListGroup.Item>
+                );
+              })}
+          </ListGroup>
           {/* {address === '' && touched.address && <div className="d-block invalid-tooltip">{errors.address}</div>} */}
         </div>
         <div style={{ marginRight: 5, width: '800px', height: '500px' }} ref={mapContainer}>
@@ -270,17 +318,17 @@ const RegisterCompany = () => {
               <form id="registerForm" className="tooltip-end-bottom" onSubmit={handleSubmit}>
                 <div className="mb-3 filled form-group tooltip-end-top">
                   <CsLineIcons icon="shop" />
-                  <Form.Control type="text" name="name" placeholder="Название компании" value={values.name} onChange={handleChange} />
+                  <Form.Control type="text" name="name" placeholder="Название компании" value={valuesInput.name} onChange={changeHandle} />
                   {errors.name && touched.name && <div className="d-block invalid-tooltip">{errors.name}</div>}
                 </div>
                 <div className="mb-3 filled form-group tooltip-end-top">
                   <CsLineIcons icon="note" />
-                  <Form.Control type="text" name="annotation" placeholder="Аннотация" value={values.annotation} onChange={handleChange} />
+                  <Form.Control type="text" name="annotation" placeholder="Аннотация" value={valuesInput.annotation} onChange={changeHandle} />
                   {errors.annotation && touched.annotation && <div className="d-block invalid-tooltip">{errors.annotation}</div>}
                 </div>
                 <div className="mb-3 filled form-group tooltip-end-top">
                   <CsLineIcons icon="phone" />
-                  <Form.Control type="text" name="phone" placeholder="Номер телефона" value={values.phone} onChange={handleChange} />
+                  <Form.Control type="text" name="phone" placeholder="Номер телефона" value={valuesInput.phone} onChange={changeHandle} />
                   {errors.phone && touched.phone && <div className="d-block invalid-tooltip">{errors.phone}</div>}
                 </div>
                 <div className="mb-3 filled form-group tooltip-end-top">
@@ -290,8 +338,8 @@ const RegisterCompany = () => {
                     type="file"
                     name="logotype"
                     title="Выберите логотип"
-                    value={values.logotype}
-                    onChange={handleChange}
+                    value={valuesInput.logotype}
+                    onChange={changeHandle}
                   />
                   {errors.logotype && touched.logotype && <div className="d-block invalid-tooltip">{errors.logotype}</div>}
                 </div>
@@ -300,9 +348,9 @@ const RegisterCompany = () => {
                   <option value="Рестораны и кафе">Рестораны и кафе</option>
                   <option value="Магазины">Магазины</option>
                 </Form.Select>
-                <Accordion defaultActiveKey="0" style={{ marginBottom: 15, padding: '10,0' }}>
-                  <Accordion.Item eventKey="0">
-                    <Accordion.Header style={{ fontSize: '14px' }}>Выберите часы работы!</Accordion.Header>
+                <Accordion defaultActiveKey="1" style={{ marginBottom: 15 }}>
+                  <Accordion.Item style={{ borderRadius: 10 }} eventKey="0">
+                    <Accordion.Header style={{ fontSize: '14px' }}>Часы работы</Accordion.Header>
                     <Accordion.Body>
                       <div hidden={hidden.week}>
                         <div
@@ -414,13 +462,13 @@ const RegisterCompany = () => {
                           }}
                         >
                           <input name="start:all" type="time" onChange={(e) => onChangeWorktimes(e)} />
-                          <input name="End:all" type="time" onChange={(e) => onChangeWorktimes(e)} />
+                          <input name="end:all" type="time" onChange={(e) => onChangeWorktimes(e)} />
                         </div>
                       </div>
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
-                <Button size="lg" type="submit">
+                <Button size="lg" onClick={() => onSubmit()}>
                   {isLoading.createCompany ? (
                     <Loader
                       style={{
