@@ -16,7 +16,7 @@ const Upgrade = () => {
         <Col className="col-auto mb-3 mb-sm-0 me-auto">
           <a className="muted-link pb-1 d-inline-block hidden breadcrumb-back" href="/profile">
             <CsLineIcons icon="chevron-left" size="13" />
-            <span className="align-middle text-small ms-1">Профиль</span>
+            <span className="align-middle fs-7 mb-1 ms-1">Профиль</span>
           </a>
           <h1 className="mb-0 pb-0 display-4 mb-3" id="title">
             Подписка
@@ -29,179 +29,204 @@ const Upgrade = () => {
           <Col>
             <Card className="h-100 hover-scale-up">
               <Card.Body className="pb-0">
+                {/* <Badge pill bg="primary" className="me-1 position-absolute s-2 t-n2 z-index-1">
+                  SALE
+                </Badge> */}
                 <div className="d-flex flex-column align-items-center mb-4">
                   <div className="bg-primary sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center mb-2">
-                    <CsLineIcons icon="building-small" className="text-white" />
+                    <CsLineIcons icon="building" className="text-white" />
                   </div>
-                  <div className="cta-4 text-primary mb-1">Standard</div>
-                  <div className="text-muted sh-3 line-through" />
-                  <div className="display-4">6000 руб</div>
+                  <div className="cta-4 text-primary mb-1">Lite</div>
+                  {/* <div className="text-muted sh-3 line-through">$ 3000</div> */}
+                  <div className="display-4">1300 руб</div>
                   <div className="text-small text-muted mb-1">В месяц</div>
                 </div>
-                <p className="text-alternate mb-4">Стандартный доступ для вашего бизнеса</p>
+                <p className="text-alternate text-center mb-4">Базовые функции для введения микробизнеса</p>
               </Card.Body>
               <Card.Footer className="pt-0 border-0">
-                {/* <div className="mb-4">
+                <div className="mb-4">
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="user" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="cart" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Single user</Col>
+                    <Col className="lh-1-25 text-alternate">Количество товаров: 50</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="help" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="support" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Forum support</Col>
+                    <Col className="lh-1-25 text-alternate">Техническая поддержка</Col>
+                  </Row>
+                  {/* <Row className="g-0 mb-2">
+                    <Col xs="auto">
+                      <div className="sw-3 me-1">
+                        <CsLineIcons icon="coin" className="d-inline-block text-primary align-top" size="17" />
+                      </div>
+                    </Col>
+                    <Col className="lh-1-25 text-alternate">Баллы за вступление</Col>
+                  </Row> */}
+                  <Row className="g-0 mb-2">
+                    <Col xs="auto">
+                      <div className="sw-3 me-1">
+                        <CsLineIcons icon="coin" className="d-inline-block text-primary align-top" size="17" />
+                      </div>
+                    </Col>
+                    <Col className="lh-1-25 text-alternate">Кешбек/Скидка</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="clipboard" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="tag" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Access to library</Col>
+                    <Col className="lh-1-25 text-alternate">Количество бонусных программ: 1</Col>
                   </Row>
-                  <Row className="g-0 mb-2">
-                    <Col xs="auto">
-                      <div className="sw-3 me-1">
-                        <CsLineIcons icon="database" className="d-inline-block text-primary align-top" size="17" />
-                      </div>
-                    </Col>
-                    <Col className="lh-1-25 text-alternate">1 GB disk space</Col>
-                  </Row>
-                </div> */}
+                </div>
                 <div className="d-flex justify-content-center">
                   <Button variant="foreground" className="btn-icon btn-icon-start hover-outline stretched-link">
-                    <CsLineIcons icon="chevron-right" /> <span>Оформлена</span>
+                    <CsLineIcons icon="chevron-right" /> <span>Подписаться</span>
                   </Button>
                 </div>
               </Card.Footer>
             </Card>
           </Col>
-          {/* <Col>
+          <Col>
             <Card className="h-100 hover-scale-up">
               <Card.Body className="pb-0">
-                <Badge pill bg="primary" className="me-1 position-absolute s-2 t-n2 z-index-1">
+                {/* <Badge pill bg="primary" className="me-1 position-absolute s-2 t-n2 z-index-1">
                   SALE
-                </Badge>
+                </Badge> */}
                 <div className="d-flex flex-column align-items-center mb-4">
-                  <div className="bg-gradient-light sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center mb-2">
+                  <div className="bg-primary sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center mb-2">
                     <CsLineIcons icon="building" className="text-white" />
                   </div>
-                  <div className="cta-4 text-primary mb-1">Team</div>
-                  <div className="text-muted sh-3 line-through">$ 10.50</div>
-                  <div className="display-4">$ 7.25</div>
-                  <div className="text-small text-muted mb-1">User/Month</div>
+                  <div className="cta-4 text-primary mb-1">Standart</div>
+                  {/* <div className="text-muted sh-3 line-through">$ 3000</div> */}
+                  <div className="display-4">3000 руб</div>
+                  <div className="text-small text-muted mb-1">В месяц</div>
                 </div>
-                <p className="text-alternate mb-4">
-                  Danish brownie chocolate bar lollipop cookie tootsie roll candy canes. Jujubes lollipop cheesecake gummi bears cheesecake.
-                </p>
+                <p className="text-alternate text-center mb-4">Базовые и дополнительные функции для бизнеса</p>
               </Card.Body>
               <Card.Footer className="pt-0 border-0">
                 <div className="mb-4">
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="user" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="cart" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Up to 50 users</Col>
+                    <Col className="lh-1-25 text-alternate">Количество товаров: 300</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="support" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="news" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Direct support</Col>
+                    <Col className="lh-1-25 text-alternate">Количество новостей и акций: 20. Публикация в день: 2</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="clipboard" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="coin" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Access to library</Col>
+                    <Col className="lh-1-25 text-alternate">Начисление баллов вручную</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="database" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="tag" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">50 GB disk space</Col>
+                    <Col className="lh-1-25 text-alternate">Количество бонусных программ: 3</Col>
+                  </Row>
+                  <Row className="g-0 mb-2">
+                    <Col xs="auto">
+                      <div className="sw-3 me-1">
+                        <CsLineIcons icon="plus" className="d-inline-block text-primary align-top" size="17" />
+                      </div>
+                    </Col>
+                    <Col className="lh-1-25 text-alternate">Все функции предыдущего тарифа: Lite</Col>
                   </Row>
                 </div>
                 <div className="d-flex justify-content-center">
                   <Button variant="foreground" className="btn-icon btn-icon-start hover-outline stretched-link">
-                    <CsLineIcons icon="chevron-right" /> <span>Upgrade</span>
+                    <CsLineIcons icon="chevron-right" /> <span>Подписаться</span>
                   </Button>
                 </div>
               </Card.Footer>
             </Card>
-          </Col> */}
-          {/* <Col>
+          </Col>
+          <Col>
             <Card className="h-100 hover-scale-up">
               <Card.Body className="pb-0">
                 <div className="d-flex flex-column align-items-center mb-4">
-                  <div className="bg-gradient-light sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center mb-2">
+                  <div className="bg-primary sw-6 sh-6 rounded-xl d-flex justify-content-center align-items-center mb-2">
                     <CsLineIcons icon="building-large" className="text-white" />
                   </div>
-                  <div className="cta-4 text-primary mb-1">Company</div>
-                  <div className="text-muted sh-3" />
-                  <div className="display-4">$ 12.75</div>
-                  <div className="text-small text-muted mb-1">User/Month</div>
+                  <div className="cta-4 text-primary mb-1">Pro</div>
+                  {/* <div className="text-muted sh-3" /> */}
+                  <div className="display-4">6000 руб</div>
+                  <div className="text-small text-muted mb-1">В месяц</div>
                 </div>
-                <p className="text-alternate mb-4">Apple pie macaroon sesame snaps cotton candy jelly pudding lollipop caramels marshmallow. </p>
+                <p className="text-alternate text-center mb-4">Все функции сервиса</p>
               </Card.Body>
               <Card.Footer className="pt-0 border-0">
                 <div className="mb-4">
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="user" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="cart" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Unlimited users</Col>
+                    <Col className="lh-1-25 text-alternate">Количество товаров: 600</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="support" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="news" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Direct support</Col>
+                    <Col className="lh-1-25 text-alternate">Количество новостей и акций: 35. Публикация в день: 3</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="clipboard" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="tag" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Access to library & hot fixes</Col>
+                    <Col className="lh-1-25 text-alternate">Количество бонусных программ: 6</Col>
                   </Row>
                   <Row className="g-0 mb-2">
                     <Col xs="auto">
                       <div className="sw-3 me-1">
-                        <CsLineIcons icon="database" className="d-inline-block text-primary align-top" size="17" />
+                        <CsLineIcons icon="invoice" className="d-inline-block text-primary align-top" size="17" />
                       </div>
                     </Col>
-                    <Col className="lh-1-25 text-alternate">Unlimited disk space</Col>
+                    <Col className="lh-1-25 text-alternate">Отправка новостей и акций для всех клиентов сервиса. Количество: 5. Публикация в день: 2</Col>
+                  </Row>
+                  <Row className="g-0 mb-2">
+                    <Col xs="auto">
+                      <div className="sw-3 me-1">
+                        <CsLineIcons icon="plus" className="d-inline-block text-primary align-top" size="17" />
+                      </div>
+                    </Col>
+                    <Col className="lh-1-25 text-alternate">Все функции предыдущего тарифа: Lite и Standart</Col>
                   </Row>
                 </div>
                 <div className="d-flex justify-content-center">
                   <Button variant="foreground" className="btn-icon btn-icon-start hover-outline stretched-link">
-                    <CsLineIcons icon="chevron-right" /> <span>Upgrade</span>
+                    <CsLineIcons icon="chevron-right" /> <span>Подписаться</span>
                   </Button>
                 </div>
               </Card.Footer>
             </Card>
-          </Col> */}
+          </Col>
         </Row>
         {/* Prices End */}
 

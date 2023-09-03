@@ -77,20 +77,20 @@ const Company = () => {
   }, [currentUser, dispatch]);
 
   useEffect(() => {
-    console.log(company);
+    console.log(company.address);
     setInfCompany({
       name: company.name,
       annotation: company.annotation,
       category: company.category,
       description: company.description,
       address: {
-        value: company.address && company.address[0].value,
-        latitude: company.address && company.address[0].latitude,
-        longitude: company.address && company.address[0].longitude,
+        value: company.address !== undefined && company.address.length > 0 && company.address[0].value,
+        latitude: company.address !== undefined && company.address.length > 0 && company.address[0].latitude,
+        longitude: company.address !== undefined && company.address.length > 0 && company.address[0].longitude,
       },
     });
-    setLat(company.address && company.address[0].latitude);
-    setLng(company.address && company.address[0].longitude);
+    setLat(company.address !== undefined && company.address.length > 0 && company.address[0].latitude);
+    setLng(company.address !== undefined && company.address.length > 0 && company.address[0].longitude);
     setActiveCompany(company.active);
     setActivePlansCompany(company.plans_active);
     setImageURL(`${DEFAUTL_BACKEND_URL}/${company.logotype}`);
@@ -171,7 +171,7 @@ const Company = () => {
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
             <a className="muted-link pb-1 d-inline-block hidden breadcrumb-back" href="/profile">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Профиль</span>
+              <span className="align-middle fs-7 mb-1 ms-1">Профиль</span>
             </a>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {' '}
@@ -232,6 +232,31 @@ const Company = () => {
             <Card className="mb-3" style={{ padding: '5px 2px 5px 8px' }}>
               {!isLoading.get && !isLoading.update ? (
                 <Card.Text>{company.link}</Card.Text>
+              ) : (
+                <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
+                  <Loader
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '25px',
+                      height: '35px',
+                    }}
+                    styleImg={{
+                      width: '250%',
+                      height: '250%',
+                    }}
+                  />
+                </div>
+              )}
+            </Card>
+          </Col>
+
+          <Col>
+            <h2 className="small-title">QR-code компании</h2>
+            <Card className="mb-3" style={{ width: '15rem', padding: '5px 2px 5px 8px' }}>
+              {!isLoading.get && !isLoading.update ? (
+                <Card.Img variant="top" src={`https://api.qrserver.com/v1/create-qr-code/?data=${company.link}&amp;size=30x30`} />
               ) : (
                 <div style={{ display: 'flex', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center' }}>
                   <Loader

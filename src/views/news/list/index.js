@@ -58,7 +58,7 @@ const NewsList = () => {
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
             <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Дашборт</span>
+              <span className="align-middle fs-7 mb-1 ms-1">Дашборт</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -121,7 +121,7 @@ const NewsList = () => {
             {!isLoading ? (
               listNews.map((news, index) => {
                 return (
-                  <Col className='mb-2' xl="3" key={index}>
+                  <Col className="mb-2" xl="3" key={index}>
                     {/* <NavLink to={`/product/${news.id}`}> */}
                     <Card style={{ width: '16rem' }} className={`mb-2 ${selectedItems.includes(1) && 'selected'}`}>
                       <Card.Img variant="top" src={`${DEFAUTL_BACKEND_URL}/${news.image}`} />
@@ -136,7 +136,7 @@ const NewsList = () => {
                             {news.name_link}
                           </Card.Link>
                         ) : (
-                          <Card.Text className='mb-1'>Без ссылки</Card.Text>
+                          <Card.Text className="mb-1">Без ссылки</Card.Text>
                         )}
                       </Card.Body>
                     </Card>

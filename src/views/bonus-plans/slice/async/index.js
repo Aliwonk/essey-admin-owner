@@ -27,8 +27,36 @@ export const fetchCreatePlan = createAsyncThunk('plans/fetchCreatePlan', async (
   return resJSON;
 });
 
+export const fetchUpdatePlan = createAsyncThunk('plans/fetchUpdatePlan', async ({ shopId, planId, token, data }) => {
+  const response = await fetch(`${DEFAUTL_BACKEND_API.BONUS_PLAN.UPDATE}?shopid=${shopId}&planid=${planId}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  const resJSON = response.json();
+  return resJSON;
+});
+
 export const fetchAccrueCashack = createAsyncThunk('plans/fetchAccrueCashack', async ({ client, token, data }) => {
   const response = await fetch(`${DEFAUTL_BACKEND_API.BONUS_PLAN.ACCRUE_ONE}/${client}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  const resJSON = response.json();
+  return resJSON;
+});
+
+export const fetchWriteOffCashack = createAsyncThunk('plans/fetchWriteOffCashack', async ({ client, token, data }) => {
+  const response = await fetch(`${DEFAUTL_BACKEND_API.BONUS_PLAN.WRITE_OFF_ONE}/${client}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,

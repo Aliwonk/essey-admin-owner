@@ -51,6 +51,12 @@ const authSlice = createSlice({
       document.cookie = `token=; max-age=0`;
       document.cookie = `role=; max-age=0`;
     },
+    clearError: (state) => {
+      state.isError.login = null;
+      state.isError.confirmEmail = null;
+      state.isError.createNewPassword = null;
+      state.isError.register = null;
+    },
   },
   extraReducers: (builder) => {
     // GET PROFILE
@@ -79,7 +85,10 @@ const authSlice = createSlice({
         if (action.payload.id) {
           state.currentUser = action.payload;
           state.isLogin = true;
-        } else if (action.payload.statusCode === 404 || action.payload.statusCode === 409) {
+        } else if (action.payload.statusCode === 404) {
+          state.isError.login = 'Пользователь не найден!';
+          state.isLogin = false;
+        } else if (action.payload.statusCode === 409 || action.payload.statusCode === 401) {
           state.isError.login = 'Неправильный логин или пароль!';
           state.isLogin = false;
         }
@@ -209,7 +218,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCurrentUser, saveUser, exiteUser } = authSlice.actions;
+export const { setCurrentUser, saveUser, exiteUser, clearError } = authSlice.actions;
 const authReducer = authSlice.reducer;
 
 export default authReducer;

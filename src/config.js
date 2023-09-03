@@ -72,7 +72,9 @@ export const DEFAUTL_BACKEND_API = {
   BONUS_PLAN: {
     CREATE: `${DEFAUTL_BACKEND_URL}/shop/plans-cashback/create`,
     GET_LIST: `${DEFAUTL_BACKEND_URL}/shop/plans-cashback/all`,
+    UPDATE: `${DEFAUTL_BACKEND_URL}/shop/plans-cashback/update`,
     ACCRUE_ONE: `${DEFAUTL_BACKEND_URL}/shop/cashback/accrue/one`,
+    WRITE_OFF_ONE: `${DEFAUTL_BACKEND_URL}/shop/cashback/write-off`,
   },
   NEWS: {
     CREATE: `${DEFAUTL_BACKEND_URL}/shop/news/create`,

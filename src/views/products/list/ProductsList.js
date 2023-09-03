@@ -60,7 +60,7 @@ const ProductsList = () => {
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
             <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Дашборд</span>
+              <span className="align-middle fs-7 mb-1 ms-1">Дашборд</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -185,7 +185,11 @@ const ProductsList = () => {
               <Row className="g-0 h-100 sh-lg-9 position-relative">
                 <Col xs="auto" className="positio-relative">
                   <NavLink to={`/product/${product.id}`}>
-                    <img src={`${DEFAUTL_BACKEND_URL}/${product.goods_images[0].path}`} alt="product" className="card-img card-img-horizontal sw-11 h-100" />
+                    <img
+                      src={`${DEFAUTL_BACKEND_URL}/${products.length > 0 && product.goods_images[0].path}`}
+                      alt="product"
+                      className="card-img card-img-horizontal sw-11 h-100"
+                    />
                   </NavLink>
                 </Col>
                 <Col className="py-4 py-lg-0 ps-5 pe-4 h-100">

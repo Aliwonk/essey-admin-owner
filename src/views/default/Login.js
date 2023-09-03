@@ -11,7 +11,7 @@ import { SVGLogo } from 'components/svg-components/SVGcomponents';
 import { fetchLoginOwner } from 'auth/async';
 import Loading from 'components/loading/Loading';
 import Loader from 'components/loader';
-import { saveUser } from 'auth/authSlice';
+import { clearError, saveUser } from 'auth/authSlice';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -34,8 +34,9 @@ const Login = () => {
     if (isLogin) {
       dispatch(saveUser(currentUser));
       document.location.href = '/';
-    } else if(!isLogin && isError.login) {
+    } else if (!isLogin && isError.login) {
       alert(isError.login);
+      dispatch(clearError());
     }
   }, [currentUser, dispatch, isLoading, isLogin]);
 

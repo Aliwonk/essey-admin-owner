@@ -85,7 +85,7 @@ const CustomersDetail = () => {
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
             <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/customers">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Список клиентов</span>
+              <span className="align-middle fs-7 mb-1 ms-1">Список клиентов</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -115,7 +115,7 @@ const CustomersDetail = () => {
 
       <Row>
         <Col xl="4">
-          <h2 className="small-title">Иноформация</h2>
+          <h2 className="small-title">Информация</h2>
           <Card className="mb-5">
             {!isLoading ? (
               <Card.Body className="mb-n5">
@@ -203,7 +203,7 @@ const CustomersDetail = () => {
                     <Row className="g-0 align-items-center mb-2">
                       <Col xs="auto">
                         <div className="border border-primary sw-5 sh-5 rounded-xl d-flex justify-content-center align-items-center">
-                          <CsLineIcons icon="cart" className="text-primary" />
+                          <CsLineIcons icon="coin" className="text-primary" />
                         </div>
                       </Col>
                       <Col className="ps-3">
@@ -310,7 +310,7 @@ const CustomersDetail = () => {
           </Card>
           {cashback && (
             <>
-              <h2 className="small-title">Статус кешбека</h2>
+              <h2 className="small-title">Текущий бонус клиента</h2>
               <Card className="mb-5">
                 <Card.Body className="mb-n5">
                   <div className="mb-5">
@@ -330,7 +330,7 @@ const CustomersDetail = () => {
                       <Col className="ps-3">
                         <Row className="g-0">
                           <Col>
-                            <div className="sh-5 d-flex align-items-center lh-1-25">СПИСАНИЕ</div>
+                            <div className="sh-5 d-flex align-items-center lh-1-25">ПОКРЫТИЕ СЧЕТА</div>
                           </Col>
                           <Col xs="auto">
                             <div className="sh-5 d-flex align-items-center">{cashback.planCashback.writeoff}%</div>

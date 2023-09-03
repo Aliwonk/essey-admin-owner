@@ -27,6 +27,9 @@ const App = () => {
 
   useEffect(() => {
     if (Object.keys(currentUser).length > 0) {
+      if (currentUser.list_shop === undefined) {
+        window.location.href = 'login';
+      }
       if (currentUser.list_shop.length === 0) {
         window.location.href = 'register-company';
       }

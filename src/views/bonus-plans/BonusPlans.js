@@ -6,23 +6,24 @@ import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from 'components/loader';
 import { NavLink } from 'react-router-dom/cjs/react-router-dom';
-import { fetchAccrueCashack, fetchCreatePlan, fetchGetListPlans } from './slice/async';
+import { fetchAccrueCashack, fetchCreatePlan, fetchGetListPlans, fetchUpdatePlan, fetchWriteOffCashack } from './slice/async';
 
 const BonusPlans = () => {
   const dispatch = useDispatch();
   const { currentUser, user } = useSelector((state) => state.auth);
-  const { plans, isLoading, isAccrue } = useSelector((state) => state.plans);
+  const { plans, isLoading, isAccrue, isWriteOff } = useSelector((state) => state.plans);
   const [values, setValues] = useState({
     name: '',
     conditions: null,
     writeoff: null,
     cashback: null,
   });
-  const [valuesAccrue, setValuesAccrue] = useState({
+  const [valuesCashback, setValuesCashback] = useState({
     client: '',
     amount: null,
     message: '',
   });
+  const [stateActivePlan, setStateActivePlan] = useState();
   const title = 'Бонусы компании';
   const description = 'Страница бонусов компании';
 
@@ -40,20 +41,30 @@ const BonusPlans = () => {
   useEffect(() => {
     if (isAccrue) {
       alert('Баллы начислены');
+    } else if (isAccrue === false) {
+      alert('При начислении баллов произошла ошибка');
     }
-  }, [isAccrue]);
+    if (isWriteOff) {
+      alert('Баллы списаны');
+    } else if (isWriteOff === false) {
+      alert('При списании баллов произошла ошибка');
+    }
+  }, [isAccrue, isWriteOff]);
 
   function handelChange(event, form = 'plan') {
-    if (form === 'plan') {
-      setValues({
-        ...values,
-        [event.target.name]: event.target.value,
-      });
-    } else {
-      setValuesAccrue({
-        ...valuesAccrue,
-        [event.target.name]: event.target.value,
-      });
+    switch (form) {
+      case 'accrue/writeoff':
+        setValuesCashback({
+          ...valuesCashback,
+          [event.target.name]: event.target.value,
+        });
+        break;
+      default:
+        setValues({
+          ...values,
+          [event.target.name]: event.target.value,
+        });
+        break;
     }
   }
 
@@ -77,15 +88,25 @@ const BonusPlans = () => {
     }
   }
 
-  function onAccrue() {
+  function onCashback(type) {
     if (Object.keys(currentUser).length > 0) {
-      dispatch(
-        fetchAccrueCashack({
-          client: valuesAccrue.client,
-          token: user.token,
-          data: { shopId: currentUser.list_shop[0].id, ...valuesAccrue },
-        })
-      );
+      if (type === 'accrue') {
+        dispatch(
+          fetchAccrueCashack({
+            client: valuesCashback.client,
+            token: user.token,
+            data: { shopId: currentUser.list_shop[0].id, ...valuesCashback },
+          })
+        );
+      } else if (type === 'writeoff') {
+        dispatch(
+          fetchWriteOffCashack({
+            client: valuesCashback.client,
+            token: user.token,
+            data: { shopId: currentUser.list_shop[0].id, ...valuesCashback },
+          })
+        );
+      }
     }
   }
 
@@ -96,9 +117,9 @@ const BonusPlans = () => {
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
-            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
+            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back " to="/">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Дашборд</span>
+              <span className="align-middle fs-7 mb-1 ms-1">Дашборд</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -138,14 +159,30 @@ const BonusPlans = () => {
                         </Col>
                       </Row>
                       <Row style={{ paddingLeft: 10 }}>
-                        <Form.Check checked={plan.active} value={plan.active} className="mt-3" type="switch" id="custom-switch" label="Активный" />
+                        <Form.Check
+                          checked={plan.active}
+                          value={plan.active}
+                          onClick={(e) => {
+                            dispatch(
+                              fetchUpdatePlan({
+                                shopId: currentUser.list_shop[0].id,
+                                token: user.token,
+                                data: { active: e.target.checked },
+                              })
+                            );
+                          }}
+                          className="mt-3"
+                          type="switch"
+                          id="custom-switch"
+                          label="Активный"
+                        />
                       </Row>
                     </Card.Body>
                   </Card>
                 </>
               );
             })
-          ) : !isLoading ? (
+          ) : !isLoading.plans ? (
             <div>Отсутсвует</div>
           ) : (
             <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
@@ -167,18 +204,18 @@ const BonusPlans = () => {
         </Col>
 
         <Col xl="8">
-          <Col className="mb-4">
-            <h2 className="small-title">Начислить баллы клиенту</h2>
+          {/* <Col className="mb-4">
+            <h2 className="small-title">Списать баллы</h2>
             <Card>
               <Card.Body>
                 <div className="mb-3">
-                  <Form.Label>Номер телеофона</Form.Label>
+                  <Form.Label>Номер телефона</Form.Label>
                   <Form.Control
                     placeholder="Введите номер телефона клиента"
                     type="text"
                     defaultValue="0"
-                    value={valuesAccrue.client}
-                    onChange={(e) => handelChange(e, 'accrue')}
+                    value={valuesWriteOff.client}
+                    onChange={(e) => handelChange(e, 'writeoff')}
                     name="client"
                   />
                 </div>
@@ -186,8 +223,8 @@ const BonusPlans = () => {
                   <Form.Label>Количество</Form.Label>
                   <Form.Control
                     placeholder="Количество баллов"
-                    value={valuesAccrue.amount}
-                    onChange={(e) => handelChange(e, 'accrue')}
+                    value={valuesWriteOff.amount}
+                    onChange={(e) => handelChange(e, 'writeoff')}
                     name="amount"
                     type="number"
                   />
@@ -197,8 +234,8 @@ const BonusPlans = () => {
                   <Form.Control
                     as="textarea"
                     placeholder="Введите сообщение"
-                    value={valuesAccrue.message}
-                    onChange={(e) => handelChange(e, 'accrue')}
+                    value={valuesWriteOff.message}
+                    onChange={(e) => handelChange(e, 'writeoff  ')}
                     name="message"
                   />
                 </div>
@@ -206,7 +243,87 @@ const BonusPlans = () => {
             </Card>
             <Button className="mt-3" onClick={() => onAccrue()}>
               {!isLoading ? (
+                <>Списать</>
+              ) : (
+                <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                  <Loader
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '15px',
+                      height: '15px',
+                    }}
+                    styleImg={{
+                      width: '250%',
+                      height: '250%',
+                    }}
+                  />
+                </div>
+              )}
+            </Button>
+          </Col> */}
+          <Col className="mb-4">
+            <h2 className="small-title">Начислить/списать баллы</h2>
+            <Card>
+              <Card.Body>
+                <div className="mb-3">
+                  <Form.Label>Номер телефона</Form.Label>
+                  <Form.Control
+                    placeholder="Введите номер телефона клиента"
+                    type="text"
+                    defaultValue="0"
+                    value={valuesCashback.client}
+                    onChange={(e) => handelChange(e, 'accrue/writeoff')}
+                    name="client"
+                  />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Количество</Form.Label>
+                  <Form.Control
+                    placeholder="Количество баллов"
+                    value={valuesCashback.amount}
+                    onChange={(e) => handelChange(e, 'accrue/writeoff')}
+                    name="amount"
+                    type="number"
+                  />
+                </div>
+                <div className="mb-3">
+                  <Form.Label>Сообщение</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    placeholder="Введите сообщение"
+                    value={valuesCashback.message}
+                    onChange={(e) => handelChange(e, 'accrue/writeoff')}
+                    name="message"
+                  />
+                </div>
+              </Card.Body>
+            </Card>
+            <Button className="mt-3" onClick={() => onCashback('accrue')}>
+              {!isLoading.accrue ? (
                 <>Начислить</>
+              ) : (
+                <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                  <Loader
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '15px',
+                      height: '15px',
+                    }}
+                    styleImg={{
+                      width: '250%',
+                      height: '250%',
+                    }}
+                  />
+                </div>
+              )}
+            </Button>
+            <Button style={{ marginLeft: 10 }} className="mt-3" onClick={() => onCashback('writeoff')}>
+              {!isLoading.writeOff ? (
+                <>Списать</>
               ) : (
                 <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                   <Loader
@@ -232,7 +349,14 @@ const BonusPlans = () => {
               <Card.Body>
                 <div className="mb-3">
                   <Form.Label>Название</Form.Label>
-                  <Form.Control placeholder="Введите название" type="text" defaultValue="0" value={values.name} onChange={(e) => handelChange(e)} name="name" />
+                  <Form.Control
+                    placeholder="Введите название статуса"
+                    type="text"
+                    defaultValue="0"
+                    value={values.name}
+                    onChange={(e) => handelChange(e)}
+                    name="name"
+                  />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Условие</Form.Label>
@@ -245,8 +369,8 @@ const BonusPlans = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <Form.Label>Списание</Form.Label>
-                  <Form.Control placeholder="Процент списание баллов" value={values.writeoff} onChange={(e) => handelChange(e)} name="writeoff" type="number" />
+                  <Form.Label>Покрытие счета</Form.Label>
+                  <Form.Control placeholder="Процент покрытие счета" value={values.writeoff} onChange={(e) => handelChange(e)} name="writeoff" type="number" />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Кешбек</Form.Label>
@@ -255,7 +379,7 @@ const BonusPlans = () => {
               </Card.Body>
             </Card>
             <Button className="mt-3" onClick={() => onSubmit()}>
-              {!isLoading ? (
+              {!isLoading.plans ? (
                 <>Сохранить</>
               ) : (
                 <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>

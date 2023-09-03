@@ -128,13 +128,14 @@ const RegisterCompany = () => {
   }, []);
 
   useEffect(() => {
-    if (user.token === 'undefined') {
+    console.log(user);
+    if (user === null || user.token === 'undefined') {
       window.location.href = '/login';
     }
     if (!isLoading.createCompany && isCreateCompany) {
       window.location.href = '/';
     }
-  }, [isLoading.createCompany, isCreateCompany, user.token]);
+  }, [isLoading.createCompany, isCreateCompany, user]);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Название не заполнен'),

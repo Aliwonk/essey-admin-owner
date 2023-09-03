@@ -50,7 +50,7 @@ const ProductsDetail = () => {
   useEffect(() => {
     if (Object.keys(product).length > 0) {
       setInfProduct(product);
-      setImageURL(`${DEFAUTL_BACKEND_URL}/${product.goods_images[0].path}`);
+      setImageURL(`${DEFAUTL_BACKEND_URL}/${product.goods_images.length > 0 && product.goods_images[0].path}`);
     }
   }, [product]);
 
@@ -143,7 +143,7 @@ const ProductsDetail = () => {
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
             <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/products">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Список продуктов</span>
+              <span className="align-middle fs-7 mb-1 ms-1">Список продуктов</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -281,13 +281,13 @@ const ProductsDetail = () => {
           {/* Product Info End */}
 
           {/* Inventory Start */}
-          {/* <h2 className="small-title">Inventory</h2> */}
-          {/* <Card className="mb-5">
+          <h2 className="small-title">Скидка</h2>
+          <Card className="mb-5">
             <Card.Body>
               <Form>
                 <div className="mb-3">
-                  <Form.Label>SKU</Form.Label>
-                  <Form.Control type="text" defaultValue="DB063-0003" />
+                  <Form.Label>Процент скидки</Form.Label>
+                  <Form.Control type="number" defaultValue={0} placeholder="Введите процент скидки" />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Barcode</Form.Label>
@@ -297,15 +297,18 @@ const ProductsDetail = () => {
                   <Form.Label>Quantity</Form.Label>
                   <Form.Control type="text" defaultValue="228" />
                 </div>
-                <div className="mb-n1">
+                {/* <div className="mb-n1">
                   <Form.Label>Settings</Form.Label>
                   <Form.Check type="switch" id="quantitySwitch1" label="Allow out of stock purchase" />
                   <Form.Check type="switch" id="quantitySwitch2" label="Notify low stock" defaultChecked />
                   <Form.Check type="switch" id="quantitySwitch3" label="Display quantity at storefront" />
-                </div>
+                </div> */}
               </Form>
+              <Button className="mt-4" style={{ width: 150 }}>
+                Добавить
+              </Button>
             </Card.Body>
-          </Card> */}
+          </Card>
           {/* Inventory End */}
 
           {/* Shipping Start */}
