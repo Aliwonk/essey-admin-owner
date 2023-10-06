@@ -8,7 +8,6 @@ export const DEFAUTL_BACKEND_URL = 'https://essey-api.site';
 export const DEFAUTL_WS_URL = 'https://essey-api.site';
 // https://essey-api.site
 // 'https://essey-api.site'
-// For detailed information: https://github.com/nfl/react-helmet#reference-guide
 export const REACT_HELMET_PROPS = {
   defaultTitle: 'ESSEY APP',
   titleTemplate: '%s | ESSEY APP',
