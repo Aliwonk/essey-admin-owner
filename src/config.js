@@ -83,8 +83,8 @@ export const DEFAUTL_BACKEND_API = {
 };
 
 export const MAPBOX = {
-  TOKEN: 'pk.eyJ1IjoiYWxpd29uayIsImEiOiJjbGJuemp4MHUwdnluM29sOTB4NDRveDc4In0.ca9oT1Xiheo19LUqkHK8lA',
-  STYLE: 'mapbox://styles/aliwonk/clbpdn452000014oilhmvewcu',
+  TOKEN: 'SECRET',
+  STYLE: 'SECRET',
 };
 
 export const DADATA = {
